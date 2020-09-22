@@ -1,0 +1,30 @@
+server:
+  port: 8082
+spring:
+  application:
+    name: chat-service
+  jpa:
+    hibernate:
+      ddl-auto: create
+    generate-ddl: true
+    database-platform: org.hibernate.dialect.MySQL8Dialect
+  datasource:
+    url: jdbc:mysql://localhost:3306/chat?createDatabaseIfNotExist=true
+    username: root
+    password: Secret12345
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    hikari:
+      minIdle: 10
+      idle-timeout: 10000
+      maximumPoolSize: 30
+
+eureka:
+  client:
+    registerWithEureka: true
+    fetchRegistry: true
+    serviceUrl:
+      defaultZone: http://localhost:8661/eureka
+    instance:
+      hostname: localhost
+
+
