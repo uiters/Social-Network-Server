@@ -17,7 +17,7 @@ public class Comment {
 
     private Long postId;
     private Long userId;
-    private String c;
+    private String content;
 
     @CreationTimestamp
     private Timestamp createdAt;
@@ -49,12 +49,12 @@ public class Comment {
         this.userId = userId;
     }
 
-    public String getC() {
-        return c;
+    public String getContent() {
+        return content;
     }
 
-    public void setC(String c) {
-        this.c = c;
+    public void setContent(String content) {
+        this.content = content;
     }
 
     public Timestamp getCreatedAt() {

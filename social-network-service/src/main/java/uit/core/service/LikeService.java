@@ -5,16 +5,20 @@ import org.springframework.stereotype.Service;
 import uit.core.entity.Like;
 import uit.core.repository.LikeRepository;
 
+import javax.transaction.Transactional;
 import java.util.List;
 
 @Service
+@Transactional
 public class LikeService {
     @Autowired
     private LikeRepository likeRepository;
 
-    public List<Like> getAll() {
-        return likeRepository.findAll();
+    public List<Like> getAll(long postId) {
+        return likeRepository.findAllByPostId(postId);
     }
+
+
 
     public Like getById(Long id) {
         return likeRepository.findById(id).get();
@@ -29,7 +33,9 @@ public class LikeService {
         return likeRepository.save(like);
     }
 
-    public void deleteById(Long id) {
-        likeRepository.deleteById(id);
+    public void deleteById(Like like) {
+        likeRepository.deleteByPostIdAndUserId(like.getPostId(), like.getUserId());
     }
+
+
 }

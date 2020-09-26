@@ -1,7 +1,12 @@
 package uit.core.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.hateoas.PagedModel;
 import org.springframework.web.bind.annotation.*;
+import uit.core.dto.response.PostItem;
+import uit.core.dto.response.PostResponse;
 import uit.core.entity.Post;
 import uit.core.service.PostService;
 
@@ -14,17 +19,22 @@ public class PostController {
     private PostService postService;
 
     @GetMapping
-    public List<Post> getAll() {
-        return postService.getAll();
+    public PostResponse getAll(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "5") int limit) {
+        return postService.getAll(page, limit);
     }
 
+//    @GetMapping("/test")
+//    public Page<Post> getAllTest(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "3") int limit) {
+//        return postService.getAllTest(page, limit);
+//    }
+
     @GetMapping("/{id}")
-    public Post getById(@PathVariable Long id) {
+    public PostItem getById(@PathVariable Long id) {
         return postService.getById(id);
     }
 
     @PostMapping
-    public Post create(@RequestBody Post post) {
+    public PostItem create(@RequestBody Post post) {
         return postService.create(post);
     }
 

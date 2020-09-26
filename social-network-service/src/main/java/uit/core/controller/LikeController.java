@@ -13,15 +13,16 @@ public class LikeController {
     @Autowired
     private LikeService likeService;
 
-    @GetMapping
-    public List<Like> getAll() {
-        return likeService.getAll();
+    @GetMapping("/{postId}")
+    public List<Like> getAll(@PathVariable long postId) {
+        return likeService.getAll(postId);
     }
 
-    @GetMapping("/{id}")
-    public Like getById(@PathVariable Long id) {
-        return likeService.getById(id);
-    }
+
+//    @GetMapping("/{id}")
+//    public Like getById(@PathVariable Long id) {
+//        return likeService.getById(id);
+//    }
 
     @PostMapping
     public Like create(@RequestBody Like like) {
@@ -33,8 +34,8 @@ public class LikeController {
         return likeService.update(like, id);
     }
 
-    @DeleteMapping("/{id}")
-    public void deleteById(@PathVariable Long id) {
-        likeService.deleteById(id);
+    @DeleteMapping()
+    public void deleteById(@RequestBody Like like) {
+        likeService.deleteById(like);
     }
 }

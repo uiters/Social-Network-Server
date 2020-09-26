@@ -1,5 +1,6 @@
 package uit.core.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -8,6 +9,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import java.sql.Timestamp;
+import java.util.Date;
 
 @Entity
 public class Post {
@@ -17,18 +19,21 @@ public class Post {
 
     private String title;
     private String description;
-    private String address;
-    private Long area;
-    private Timestamp expiredAt;
-    private Long status;
-    private Long userId;
-    private Long priceFrom;
-    private Long priceTo;
-    private Long groupId;
     private Long typeBusiness;
     private Long typeProperty;
+    private Long area;
     private String district;
+    private String address;
     private Long roomNumber;
+    private Long priceFrom;
+    private Long priceTo;
+
+    private Long userId;
+    private Long groupId;
+    private Long status;
+
+    @JsonFormat(shape=JsonFormat.Shape.STRING, pattern="dd-MM-yyyy")
+    private Date expiredAt;
 
     @CreationTimestamp
     private Timestamp createdAt;
@@ -68,11 +73,11 @@ public class Post {
         this.address = address;
     }
 
-    public Timestamp getExpiredAt() {
+    public Date getExpiredAt() {
         return expiredAt;
     }
 
-    public void setExpiredAt(Timestamp expiredAt) {
+    public void setExpiredAt(Date expiredAt) {
         this.expiredAt = expiredAt;
     }
 
