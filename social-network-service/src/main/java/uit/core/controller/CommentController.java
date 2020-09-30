@@ -20,9 +20,9 @@ public class CommentController {
         return commentService.getAll(postId, page, limit);
     }
 
-    @PostMapping("/{postId}")
-    public Comment create(@PathVariable long postId, @RequestBody CommentRequest commentRequest) {
-        return commentService.create(postId, commentRequest);
+    @PostMapping
+    public Comment create(@RequestBody CommentRequest commentRequest) {
+        return commentService.create(commentRequest);
     }
 
     @PutMapping("/{id}")

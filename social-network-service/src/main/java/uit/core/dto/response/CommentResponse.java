@@ -5,6 +5,7 @@ import java.util.List;
 public class CommentResponse {
     private Boolean hasNext;
     private String nextLink;
+    private long postId;
     private List<CommentItem> items;
 
     public Boolean getHasNext() {
@@ -29,5 +30,13 @@ public class CommentResponse {
 
     public void setItems(List<CommentItem> items) {
         this.items = items;
+    }
+
+    public long getPostId() {
+        return postId;
+    }
+
+    public void setPostId(long postId) {
+        this.postId = postId;
     }
 }

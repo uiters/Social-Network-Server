@@ -13,8 +13,8 @@ public class LikeController {
     @Autowired
     private LikeService likeService;
 
-    @GetMapping("/{postId}")
-    public List<Like> getAll(@PathVariable long postId) {
+    @GetMapping()
+    public List<String> getAll(@RequestParam long postId) {
         return likeService.getAll(postId);
     }
 

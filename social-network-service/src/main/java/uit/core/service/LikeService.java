@@ -6,6 +6,7 @@ import uit.core.entity.Like;
 import uit.core.repository.LikeRepository;
 
 import javax.transaction.Transactional;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -14,8 +15,13 @@ public class LikeService {
     @Autowired
     private LikeRepository likeRepository;
 
-    public List<Like> getAll(long postId) {
-        return likeRepository.findAllByPostId(postId);
+    public List<String> getAll(long postId) {
+        List<String> result = new ArrayList();
+        List<Like> likes = likeRepository.findAllByPostId(postId);
+        likes.stream().forEach((like) -> {
+            result.add(like.getUserId().toString());
+        });
+        return result;
     }
 
 

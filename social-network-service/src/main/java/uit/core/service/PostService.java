@@ -1,6 +1,7 @@
 package uit.core.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.netflix.discovery.converters.Auto;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Service;
 import uit.core.dto.response.PostItem;
 import uit.core.dto.response.PostResponse;
 import uit.core.entity.Post;
+import uit.core.repository.LikeRepository;
 import uit.core.repository.PostRepository;
 
 import java.util.ArrayList;
@@ -28,6 +30,9 @@ public class PostService {
     @Autowired
     private PagedResourcesAssembler<Post> pagedResourcesAssembler;
 
+    @Autowired
+    private LikeRepository likeRepository;
+
     public PostResponse getAll(int page, int limit) {
         PostResponse postResponse = new PostResponse();
         Pageable paging = PageRequest.of(page, limit);
@@ -36,6 +41,7 @@ public class PostService {
         List<PostItem> postItems = new ArrayList();
         for (Post post : response.getContent()) {
             PostItem postItem = modelMapper.map(post, PostItem.class);
+            postItem.setTotalLike(getTotalLikes(postItem.getId()));
             postItems.add(postItem);
         }
 
@@ -48,6 +54,10 @@ public class PostService {
         String nextLink = "/post?&page=".concat(String.valueOf(page+1));
         postResponse.setNextLink(nextLink);
         return postResponse;
+    }
+
+    private long getTotalLikes(long postId) {
+        return likeRepository.findAllByPostId(postId).size();
     }
 
     public PostItem getById(Long id) {

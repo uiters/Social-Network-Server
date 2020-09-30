@@ -44,6 +44,8 @@ public class CommentService {
         }
         String nextLink = "/comment?&page=".concat(String.valueOf(page+1));
         commentResponse.setNextLink(nextLink);
+
+        commentResponse.setPostId(postId);
         return commentResponse;
     }
 
@@ -51,10 +53,10 @@ public class CommentService {
         return commentRepository.findById(id).get();
     }
 
-    public Comment create(long postId, CommentRequest commentRequest) {
+    public Comment create(CommentRequest commentRequest) {
         Comment comment = new Comment();
         comment.setContent(commentRequest.getContent());
-        comment.setPostId(postId);
+        comment.setPostId(commentRequest.getPostId());
 
         return commentRepository.save(comment);
     }

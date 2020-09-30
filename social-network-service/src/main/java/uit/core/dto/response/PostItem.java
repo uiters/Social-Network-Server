@@ -24,6 +24,8 @@ public class PostItem {
     private String username;
     private long groupId;
 
+    private long totalLike;
+
     @JsonFormat(shape=JsonFormat.Shape.STRING, pattern="dd-MM-yyyy")
     private Date expiredAt;
 
@@ -175,5 +177,13 @@ public class PostItem {
 
     public void setImages(List<String> images) {
         this.images = images;
+    }
+
+    public long getTotalLike() {
+        return totalLike;
+    }
+
+    public void setTotalLike(long totalLike) {
+        this.totalLike = totalLike;
     }
 }
