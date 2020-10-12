@@ -1,4 +1,4 @@
-package uit.auth.entity;
+package uit.core.entity;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -10,10 +10,7 @@ import javax.persistence.Id;
 import java.sql.Timestamp;
 import java.util.Collection;
 
-@Entity
 public class User implements UserDetails {
-    @Id
-//    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
     private String username;
@@ -36,7 +33,7 @@ public class User implements UserDetails {
 
     @Override
     public String getUsername() {
-        return email;
+        return username;
     }
 
     @Override

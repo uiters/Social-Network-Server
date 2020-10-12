@@ -1,6 +1,9 @@
 package uit.auth.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import uit.auth.entity.User;
 import uit.auth.repository.UserRepository;
@@ -8,7 +11,7 @@ import uit.auth.repository.UserRepository;
 import java.util.List;
 
 @Service
-public class UserService {
+public class UserService implements UserDetailsService {
     @Autowired
     private UserRepository userRepository;
 
@@ -31,5 +34,22 @@ public class UserService {
 
     public void deleteById(Long id) {
         userRepository.deleteById(id);
+    }
+
+    public void deleteAll() {
+        userRepository.deleteAll();
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+        User user = userRepository.findByEmail(email);
+        if (user != null) {
+            return user;
+        }
+        else throw new UsernameNotFoundException("Incorrect username/password");
+    }
+
+    public User getByEmail(String email) {
+        return userRepository.findByEmail(email);
     }
 }

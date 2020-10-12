@@ -10,12 +10,16 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.PagedModel;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import uit.core.dto.response.PostItem;
 import uit.core.dto.response.PostResponse;
 import uit.core.entity.Post;
+import uit.core.entity.User;
+import uit.core.feign.AuthServerFeign;
 import uit.core.repository.LikeRepository;
 import uit.core.repository.PostRepository;
+import uit.core.util.SocialUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,6 +37,9 @@ public class PostService {
     @Autowired
     private LikeRepository likeRepository;
 
+    @Autowired
+    private AuthServerFeign authServerFeign;
+
     public PostResponse getAll(int page, int limit) {
         PostResponse postResponse = new PostResponse();
         Pageable paging = PageRequest.of(page, limit);
@@ -41,7 +48,12 @@ public class PostService {
         List<PostItem> postItems = new ArrayList();
         for (Post post : response.getContent()) {
             PostItem postItem = modelMapper.map(post, PostItem.class);
+
+            User user = authServerFeign.getById(post.getUserId());
+            postItem.setUsername(user.getFullname());
+
             postItem.setTotalLike(getTotalLikes(postItem.getId()));
+
             postItems.add(postItem);
         }
 
@@ -62,14 +74,21 @@ public class PostService {
 
     public PostItem getById(Long id) {
         Post post = postRepository.findById(id).get();
-        return modelMapper.map(post, PostItem.class);
+        PostItem postItem = modelMapper.map(post, PostItem.class);
+
+        User user = authServerFeign.getById(post.getUserId());
+        postItem.setUsername(user.getFullname());
+        return postItem;
     }
 
     public PostItem create(Post post) {
+        User user = authServerFeign.getByUserName(SocialUtil.getCurrentUserEmail());
+        post.setUserId(user.getId());
+
         Post savedPost = postRepository.save(post);
         PostItem postResponse = modelMapper.map(savedPost, PostItem.class);
-        postResponse.setUsername("Huynh Tan Duy");
-        postResponse.setUserId(1);
+        postResponse.setUsername(user.getFullname());
+        postResponse.setUserId(user.getId());
         return postResponse;
     }
 
@@ -82,9 +101,5 @@ public class PostService {
         postRepository.deleteById(id);
     }
 
-    public Page<Post> getAllTest(int page, int limit) {
-        Pageable paging = PageRequest.of(page, limit);
-        Page<Post> pagedResult = postRepository.findAll(paging);
-        return pagedResult;
-    }
+
 }

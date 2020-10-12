@@ -27,5 +27,19 @@ eureka:
     instance:
       hostname: localhost
 
+security:
+  oauth2:
+    client:
+      clientId: social
+      clientSecret: Social123
+      accessTokenUri: http://localhost:8888/oauth/token
+      grant-type: client_credentials
+      scope: social, media, chat
+    resource:
+      tokenInfoUri: http://localhost:8888/oauth/check_token
 
-
+social:
+  includeLocalDatabase: true
+  security:
+    jwt-signer:
+      signing-key: Social123

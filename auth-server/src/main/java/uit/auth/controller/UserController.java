@@ -1,6 +1,7 @@
 package uit.auth.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import uit.auth.entity.User;
 import uit.auth.service.UserService;
@@ -21,6 +22,11 @@ public class UserController {
     @GetMapping("/{id}")
     public User getById(@PathVariable Long id) {
         return userService.getById(id);
+    }
+
+    @GetMapping("/email/{email}")
+    public User getByUserName(@PathVariable String email) {
+        return userService.getByEmail(email);
     }
 
     @PostMapping

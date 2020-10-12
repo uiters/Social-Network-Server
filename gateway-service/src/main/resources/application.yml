@@ -21,7 +21,7 @@ zuul:
   ignoredServices: '*'
   routes:
     social-network-service:
-      path: /sn/**
+      path: /social/**
       serviceId: social-network-service
       stripPrefix: true
     auth-server:

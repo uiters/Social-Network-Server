@@ -1,0 +1,62 @@
+version: '3.8'
+
+services:
+  mysql-docker:
+    image: mysql:8.0
+    container_name: mysql-docker
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: Secret12345
+      MYSQL_DATABASE: auth
+      MYSQL_USER: root
+      MYSQL_PASSWORD: Secret12345@
+
+  eureka-server:
+    build: ./eureka-server
+    container_name: eureka-server
+    restart: on-failure
+    ports:
+      - 8661:8661
+    environment:
+      - EUREKA_INSTANCE_HOSTNAME=eureka-server
+
+  auth-server:
+    build: ./auth-server
+    container_name: auth-server
+    restart: on-failure
+    ports:
+      - 8888:8888
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql-docker:3306/auth
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8661/eureka
+    depends_on:
+      - mysql-docker
+      - eureka-server
+
+  social-network-service:
+    build: ./social-network-service
+    container_name: social-network-service
+    restart: on-failure
+    ports:
+      - 8080:8080
+    environment:
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8661/eureka
+    depends_on:
+      - eureka-server
+      - auth-server
+
+  gateway-service:
+    build: ./gateway-server
+    container_name: gateway-service
+    restart: on-failure
+    ports:
+      - 9090:9090
+    environment:
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8661/eureka
+    depends_on:
+      - auth-server
+      - social-network-service
+
+
+
+

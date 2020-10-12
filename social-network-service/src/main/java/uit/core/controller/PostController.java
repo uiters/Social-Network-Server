@@ -4,12 +4,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.hateoas.PagedModel;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import uit.core.dto.response.PostItem;
 import uit.core.dto.response.PostResponse;
 import uit.core.entity.Post;
 import uit.core.service.PostService;
 
+import java.security.Principal;
 import java.util.List;
 
 @RestController
@@ -23,16 +25,12 @@ public class PostController {
         return postService.getAll(page, limit);
     }
 
-//    @GetMapping("/test")
-//    public Page<Post> getAllTest(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "3") int limit) {
-//        return postService.getAllTest(page, limit);
-//    }
-
     @GetMapping("/{id}")
     public PostItem getById(@PathVariable Long id) {
         return postService.getById(id);
     }
 
+    @PreAuthorize("#oauth2.hasScope('ui')")
     @PostMapping
     public PostItem create(@RequestBody Post post) {
         return postService.create(post);

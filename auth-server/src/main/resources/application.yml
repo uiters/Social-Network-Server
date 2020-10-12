@@ -27,4 +27,12 @@ eureka:
     instance:
       hostname: localhost
 
+social:
+  includeLocalDatabase: true
+  security:
+    jwt-signer:
+      signing-key: Social123
+    clientCredentialsFile: clients-credentials.yml
+
+
 
