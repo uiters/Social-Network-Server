@@ -1,4 +1,4 @@
-version: '3.8'
+version: '3.3'
 
 services:
   mysql-docker:
@@ -36,17 +36,17 @@ services:
   social-network-service:
     build: ./social-network-service
     container_name: social-network-service
-    restart: on-failure
     ports:
       - 8080:8080
     environment:
       - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8661/eureka
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql-docker:3306/social_network_service?createDatabaseIfNotExist=true
     depends_on:
       - eureka-server
       - auth-server
 
   gateway-service:
-    build: ./gateway-server
+    build: ./gateway-service
     container_name: gateway-service
     restart: on-failure
     ports:
