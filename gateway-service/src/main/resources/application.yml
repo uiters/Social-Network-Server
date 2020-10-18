@@ -17,8 +17,8 @@ eureka:
 zuul:
   sensitiveHeaders: Cookie,Set-Cookie
   host:
-    connect-timeout-milllis: 50000000
-    socket-timeout-milllis: 50000000
+    connect-timeout-milllis: 200000000
+    socket-timeout-milllis: 200000000
   ignoredServices: '*'
   routes:
     social-network-service:
