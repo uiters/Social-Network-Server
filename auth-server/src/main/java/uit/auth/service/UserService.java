@@ -49,7 +49,7 @@ public class UserService implements UserDetailsService {
         else throw new UsernameNotFoundException("Incorrect username/password");
     }
 
-    public User getByEmail(String email) {
-        return userRepository.findByEmail(email);
+    public User getByUsername(String username) {
+        return userRepository.findByUsername(username);
     }
 }

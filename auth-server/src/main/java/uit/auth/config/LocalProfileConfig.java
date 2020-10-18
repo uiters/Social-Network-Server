@@ -33,12 +33,12 @@ public class LocalProfileConfig implements CommandLineRunner {
     private User buildUser1() {
         User user = new User();
         user.setId((long) 1);
-        user.setFullname("Huynh Tan Duy");
+        user.setUsername("Huynh Tan Duy");
         user.setEmail("tanduyht@gmail.com");
         user.setGender(1);
         user.setStatus(1);
         user.setRole(1);
-        user.setUsername("tanduyht@gmail.com");
+//        user.setUsername("tanduyht@gmail.com");
         user.setPassword(encoder.encode("abc123"));
         return user;
     }
@@ -46,7 +46,7 @@ public class LocalProfileConfig implements CommandLineRunner {
     private User buildUser2() {
         User user = new User();
         user.setId((long) 2);
-        user.setFullname("Huynh Phuong Duy");
+        user.setUsername("Huynh Phuong Duy");
         user.setEmail("kudophuongduy@gmail.com");
         user.setGender(1);
         user.setStatus(1);

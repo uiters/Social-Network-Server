@@ -7,18 +7,29 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import uit.media.config.AmazonS3Client;
+import uit.media.entity.Image;
+import uit.media.repository.ImageRepository;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 
 @Service
 public class AmazonS3Service {
     @Autowired
+    private ImageRepository imageRepository;
+
+    @Autowired
     private AmazonS3Client amazonS3Client;
 
-    public String uploadFile(MultipartFile multipartFile) {
+    public List<Image> getPostImages(long postId) {
+         return imageRepository.findByPostId(postId);
+    }
+
+    public String uploadFile(MultipartFile multipartFile, long postId) {
         String fileUrl = "";
         try {
             File file = convertMultiPartToFile(multipartFile);
@@ -29,6 +40,12 @@ public class AmazonS3Service {
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+        Image image = new Image();
+        image.setPostId(postId);
+        image.setURL(fileUrl);
+        imageRepository.save(image);
+
         return fileUrl;
     }
 

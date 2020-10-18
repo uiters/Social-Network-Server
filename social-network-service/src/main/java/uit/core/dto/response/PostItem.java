@@ -35,6 +35,16 @@ public class PostItem {
 
     private List<String> images;
 
+    private Boolean liked;
+
+    public Boolean getLiked() {
+        return liked;
+    }
+
+    public void setLiked(Boolean liked) {
+        this.liked = liked;
+    }
+
     public long getId() {
         return id;
     }

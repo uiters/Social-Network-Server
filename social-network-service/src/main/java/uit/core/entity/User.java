@@ -14,7 +14,7 @@ public class User implements UserDetails {
     private Long id;
 
     private String username;
-    private String fullname;
+
     private String email;
     private String password;
     private String avatar;
@@ -60,13 +60,7 @@ public class User implements UserDetails {
         this.username = username;
     }
 
-    public String getFullname() {
-        return fullname;
-    }
 
-    public void setFullname(String fullname) {
-        this.fullname = fullname;
-    }
 
     public String getEmail() {
         return email;

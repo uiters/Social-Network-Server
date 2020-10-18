@@ -13,7 +13,10 @@ import uit.core.dto.response.PostItem;
 import uit.core.dto.response.PostResponse;
 import uit.core.entity.Comment;
 import uit.core.entity.Post;
+import uit.core.entity.User;
+import uit.core.feign.AuthServerFeign;
 import uit.core.repository.CommentRepository;
+import uit.core.util.SocialUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,6 +27,9 @@ public class CommentService {
 
     @Autowired
     private CommentRepository commentRepository;
+
+    @Autowired
+    private AuthServerFeign authServerFeign;
 
     public CommentResponse getAll(long postId, int page, int limit) {
         CommentResponse commentResponse = new CommentResponse();
@@ -58,6 +64,8 @@ public class CommentService {
         comment.setContent(commentRequest.getContent());
         comment.setPostId(commentRequest.getPostId());
 
+        User user = authServerFeign.getByUserName(SocialUtil.getCurrentUserEmail());
+        comment.setUserId(user.getId());
         return commentRepository.save(comment);
     }
 

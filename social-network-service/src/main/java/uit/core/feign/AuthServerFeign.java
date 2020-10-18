@@ -8,8 +8,8 @@ import uit.core.entity.User;
 
 @FeignClient(name="auth-server")
 public interface AuthServerFeign {
-    @GetMapping("/user/email/{email}")
-    User getByUserName(@PathVariable String email);
+    @GetMapping("/user/username/{username}")
+    User getByUserName(@PathVariable String username);
 
     @GetMapping("/user/{id}")
     User getById(@PathVariable Long id);

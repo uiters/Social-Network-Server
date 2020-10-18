@@ -2,25 +2,33 @@ package uit.core.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.netflix.discovery.converters.Auto;
+
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.PagedModel;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 import uit.core.dto.response.PostItem;
 import uit.core.dto.response.PostResponse;
+import uit.core.entity.Image;
 import uit.core.entity.Post;
 import uit.core.entity.User;
 import uit.core.feign.AuthServerFeign;
+import uit.core.feign.MediaServiceFeign;
 import uit.core.repository.LikeRepository;
 import uit.core.repository.PostRepository;
 import uit.core.util.SocialUtil;
 
+import java.text.ParseException;
+import java.util.Date;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,6 +48,9 @@ public class PostService {
     @Autowired
     private AuthServerFeign authServerFeign;
 
+    @Autowired
+    private MediaServiceFeign mediaServiceFeign;
+
     public PostResponse getAll(int page, int limit) {
         PostResponse postResponse = new PostResponse();
         Pageable paging = PageRequest.of(page, limit);
@@ -50,10 +61,13 @@ public class PostService {
             PostItem postItem = modelMapper.map(post, PostItem.class);
 
             User user = authServerFeign.getById(post.getUserId());
-            postItem.setUsername(user.getFullname());
+            postItem.setUsername(user.getUsername());
 
             postItem.setTotalLike(getTotalLikes(postItem.getId()));
 
+            postItem.setImages(getListImagesOfPost(postItem.getId()));
+            
+            postItem.setLiked(isLiked(postItem.getId()));
             postItems.add(postItem);
         }
 
@@ -68,6 +82,24 @@ public class PostService {
         return postResponse;
     }
 
+    private Boolean isLiked(long postId) {
+        try {
+            User user = authServerFeign.getByUserName(SocialUtil.getCurrentUserEmail());
+            return likeRepository.findByUserIdAndPostId(user.getId(), postId).isPresent();
+        } catch (Exception ex) {
+            return false;
+        }
+    }
+
+    private List<String> getListImagesOfPost(long postId) {
+        List<String> result = new ArrayList<>();
+        List<Image> images = mediaServiceFeign.getPostImages(postId);
+        for (Image image : images) {
+            result.add(image.getURL());
+        }
+        return result;
+    }
+
     private long getTotalLikes(long postId) {
         return likeRepository.findAllByPostId(postId).size();
     }
@@ -77,7 +109,9 @@ public class PostService {
         PostItem postItem = modelMapper.map(post, PostItem.class);
 
         User user = authServerFeign.getById(post.getUserId());
-        postItem.setUsername(user.getFullname());
+        postItem.setUsername(user.getUsername());
+        postItem.setImages(getListImagesOfPost(postItem.getId()));
+
         return postItem;
     }
 
@@ -87,7 +121,7 @@ public class PostService {
 
         Post savedPost = postRepository.save(post);
         PostItem postResponse = modelMapper.map(savedPost, PostItem.class);
-        postResponse.setUsername(user.getFullname());
+        postResponse.setUsername(user.getUsername());
         postResponse.setUserId(user.getId());
         return postResponse;
     }
@@ -102,4 +136,32 @@ public class PostService {
     }
 
 
+    public PostItem create(String title, String description, String typeBusiness, String typeProperty, String area, String district, String address, String roomNumber, String priceFrom, String priceTo, String expiredAt, MultipartFile[] images) throws ParseException {
+        Post post = new Post();
+        post.setTitle(title);
+        post.setDescription(description);
+        post.setTypeBusiness(Long.valueOf(typeBusiness));
+        post.setTypeProperty(Long.valueOf(typeProperty));
+        post.setArea(Long.valueOf(area));
+        post.setDistrict(district);
+        post.setAddress(address);
+        post.setRoomNumber(Long.valueOf(roomNumber));
+        post.setPriceFrom(Long.valueOf(priceFrom));
+        post.setPriceTo(Long.valueOf(priceTo));
+
+        Date expiredDate=new SimpleDateFormat("dd-MM-yyyy").parse(expiredAt);
+        post.setExpiredAt(expiredDate);
+
+        User user = authServerFeign.getByUserName(SocialUtil.getCurrentUserEmail());
+        post.setUserId(user.getId());
+
+        Post savedPost = postRepository.save(post);
+        PostItem postResponse = modelMapper.map(savedPost, PostItem.class);
+        postResponse.setUsername(user.getUsername());
+        postResponse.setUserId(user.getId());
+
+        List<String> imagesUrl = mediaServiceFeign.uploadMultipleFile(images, savedPost.getId());
+        postResponse.setImages(imagesUrl);
+        return postResponse;
+    }
 }

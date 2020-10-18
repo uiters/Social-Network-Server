@@ -15,18 +15,24 @@ eureka:
       hostname: localhost
 
 zuul:
+  sensitiveHeaders: Cookie,Set-Cookie
   host:
-    connect-timeout-milllis: 5000000
-    socket-timeout-milllis: 5000000
+    connect-timeout-milllis: 50000000
+    socket-timeout-milllis: 50000000
   ignoredServices: '*'
   routes:
     social-network-service:
       path: /social/**
       serviceId: social-network-service
       stripPrefix: true
+      sensitive-headers: Cookie,Set-Cookie
     auth-server:
       path: /auth/**
       serviceId: auth-server
       stripPrefix: true
+      sensitive-headers: Cookie,Set-Cookie
+  security:
+    basic:
+      enabled: false
 
 
