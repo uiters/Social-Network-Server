@@ -44,6 +44,18 @@ services:
     depends_on:
       - eureka-server
       - auth-server
+      - media-service
+
+  media-service:
+    build: ./media-service
+    container_name: media-service
+    ports:
+      - 8081:8081
+    environment:
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8661/eureka
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql-docker:3306/media?createDatabaseIfNotExist=true
+    depends_on:
+      - eureka-server
 
   gateway-service:
     build: ./gateway-service
