@@ -3,17 +3,26 @@ package uit.core.dto.response;
 import java.sql.Timestamp;
 
 public class CommentItem {
-    private String userId;
+    private long id;
+    private long userId;
     private String username;
     private String avatar;
     private String content;
     private Timestamp createdAt;
 
-    public String getUserId() {
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    public long getUserId() {
         return userId;
     }
 
-    public void setUserId(String userId) {
+    public void setUserId(long userId) {
         this.userId = userId;
     }
 

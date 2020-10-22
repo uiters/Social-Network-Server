@@ -6,8 +6,10 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import uit.core.entity.Post;
+import uit.core.repository.specification.PostSpecification;
 
-public interface PostRepository extends JpaRepository<Post, Long> {
+public interface PostRepository extends JpaRepository<Post, Long>, JpaSpecificationExecutor<Post> {
+//    Page<Post> findAll(Pageable paging, PostSpecification postSpecification);
 //    Page<Post> findAll(Specification<T> postSpecification, Pageable paging);
 //    Page<Post> findAll(Pageable pageable);
 }

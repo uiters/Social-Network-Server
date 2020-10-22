@@ -36,19 +36,40 @@ public class PostController {
 
     @PreAuthorize("#oauth2.hasScope('ui')")
     @PostMapping
-    public PostItem create(@RequestPart String title,
-                           @RequestPart String description,
-                           @RequestPart String typeBusiness,
-                           @RequestPart String typeProperty,
-                           @RequestPart String area,
-                           @RequestPart String district,
-                           @RequestPart String address,
-                           @RequestPart String roomNumber,
-                           @RequestPart String priceFrom,
-                           @RequestPart String priceTo,
-                           @RequestPart String expiredAt,
+    public PostItem create(@RequestParam(defaultValue = "", required = false) String title,
+                           @RequestParam(defaultValue = "", required = false) String description,
+                           @RequestParam(defaultValue = "", required = false) String typeBusiness,
+                           @RequestParam(defaultValue = "", required = false) String typeProperty,
+                           @RequestParam(defaultValue = "", required = false) String area,
+                           @RequestParam(defaultValue = "", required = false) String district,
+                           @RequestParam(defaultValue = "", required = false) String address,
+                           @RequestParam(defaultValue = "", required = false) String roomNumber,
+                           @RequestParam(defaultValue = "", required = false) String priceFrom,
+                           @RequestParam(defaultValue = "", required = false) String priceTo,
+                           @RequestParam(defaultValue = "", required = false) String price,
+                           @RequestParam(defaultValue = "", required = false) String expiredAt,
                            @RequestPart(value = "images") MultipartFile[] images) throws ParseException {
-        return postService.create(title, description, typeBusiness, typeProperty, area, district, address, roomNumber, priceFrom, priceTo, expiredAt, images);
+        return postService.create(title, description, typeBusiness, typeProperty, area, district, address, roomNumber, priceFrom, priceTo, expiredAt, price, images);
+    }
+
+    @GetMapping("/search")
+    public PostResponse search(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "5") int limit,
+            @RequestParam(defaultValue = "", required = false) String title,
+            @RequestParam(defaultValue = "", required = false) String description,
+            @RequestParam(defaultValue = "", required = false) String typeBusiness,
+            @RequestParam(defaultValue = "", required = false) String typeProperty,
+            @RequestParam(defaultValue = "", required = false) String area,
+            @RequestParam(defaultValue = "", required = false) String district,
+            @RequestParam(defaultValue = "", required = false) String address,
+            @RequestParam(defaultValue = "", required = false) String roomNumber,
+            @RequestParam(defaultValue = "", required = false) String priceFrom,
+            @RequestParam(defaultValue = "", required = false) String priceTo,
+            @RequestParam(defaultValue = "", required = false) String price,
+            @RequestParam(defaultValue = "", required = false) String expiredAt
+            ) throws ParseException {
+        return postService.search(page,limit, title, description, typeBusiness, typeProperty, area, district, address, roomNumber, priceFrom, priceTo, expiredAt, price);
     }
 
     @PreAuthorize("#oauth2.hasScope('ui')")

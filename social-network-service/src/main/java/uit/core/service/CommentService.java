@@ -39,6 +39,11 @@ public class CommentService {
         List<CommentItem> commentItems = new ArrayList();
         for (Comment comment : response.getContent()) {
             CommentItem commentItem = modelMapper.map(comment, CommentItem.class);
+
+            User user = authServerFeign.getById(comment.getUserId());
+            commentItem.setUserId(user.getId());
+            commentItem.setUsername(user.getUsername());
+
             commentItems.add(commentItem);
         }
 
@@ -59,21 +64,32 @@ public class CommentService {
         return commentRepository.findById(id).get();
     }
 
-    public Comment create(CommentRequest commentRequest) {
+    public CommentItem create(CommentRequest commentRequest) {
         Comment comment = new Comment();
         comment.setContent(commentRequest.getContent());
         comment.setPostId(commentRequest.getPostId());
 
         User user = authServerFeign.getByUserName(SocialUtil.getCurrentUserEmail());
         comment.setUserId(user.getId());
-        return commentRepository.save(comment);
+        Comment savedComment = commentRepository.save(comment);
+
+        CommentItem commentItem = modelMapper.map(savedComment, CommentItem.class);
+        commentItem.setUserId(user.getId());
+        commentItem.setUsername(user.getUsername());
+        return commentItem;
     }
 
-    public Comment update(Comment comment, Long id) {
+    public CommentItem update(Comment comment, Long id) {
         Comment dbComment = commentRepository.findById(id).get();
         dbComment.setContent(comment.getContent());
 
-        return commentRepository.save(dbComment);
+        Comment savedComment = commentRepository.save(dbComment);
+
+        User user = authServerFeign.getByUserName(SocialUtil.getCurrentUserEmail());
+        CommentItem commentItem = modelMapper.map(savedComment, CommentItem.class);
+        commentItem.setUserId(user.getId());
+        commentItem.setUsername(user.getUsername());
+        return commentItem;
     }
 
     public void deleteById(Long id) {

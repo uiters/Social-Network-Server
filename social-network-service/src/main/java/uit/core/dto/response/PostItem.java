@@ -11,16 +11,17 @@ public class PostItem {
 
     private String title;
     private String description;
-    private long typeBusiness;
-    private long typeProperty;
-    private long area;
+    private Long typeBusiness;
+    private Long typeProperty;
+    private Long area;
     private String district;
     private String address;
-    private long roomNumber;
-    private long priceFrom;
-    private long priceTo;
+    private Long roomNumber;
+    private Long price;
+    private Long priceFrom;
+    private Long priceTo;
 
-    private long userId;
+    private Long userId;
     private String username;
     private long groupId;
 
@@ -36,14 +37,6 @@ public class PostItem {
     private List<String> images;
 
     private Boolean liked;
-
-    public Boolean getLiked() {
-        return liked;
-    }
-
-    public void setLiked(Boolean liked) {
-        this.liked = liked;
-    }
 
     public long getId() {
         return id;
@@ -69,27 +62,27 @@ public class PostItem {
         this.description = description;
     }
 
-    public long getTypeBusiness() {
+    public Long getTypeBusiness() {
         return typeBusiness;
     }
 
-    public void setTypeBusiness(long typeBusiness) {
+    public void setTypeBusiness(Long typeBusiness) {
         this.typeBusiness = typeBusiness;
     }
 
-    public long getTypeProperty() {
+    public Long getTypeProperty() {
         return typeProperty;
     }
 
-    public void setTypeProperty(long typeProperty) {
+    public void setTypeProperty(Long typeProperty) {
         this.typeProperty = typeProperty;
     }
 
-    public long getArea() {
+    public Long getArea() {
         return area;
     }
 
-    public void setArea(long area) {
+    public void setArea(Long area) {
         this.area = area;
     }
 
@@ -109,35 +102,43 @@ public class PostItem {
         this.address = address;
     }
 
-    public long getRoomNumber() {
+    public Long getRoomNumber() {
         return roomNumber;
     }
 
-    public void setRoomNumber(long roomNumber) {
+    public void setRoomNumber(Long roomNumber) {
         this.roomNumber = roomNumber;
     }
 
-    public long getPriceFrom() {
+    public Long getPrice() {
+        return price;
+    }
+
+    public void setPrice(Long price) {
+        this.price = price;
+    }
+
+    public Long getPriceFrom() {
         return priceFrom;
     }
 
-    public void setPriceFrom(long priceFrom) {
+    public void setPriceFrom(Long priceFrom) {
         this.priceFrom = priceFrom;
     }
 
-    public long getPriceTo() {
+    public Long getPriceTo() {
         return priceTo;
     }
 
-    public void setPriceTo(long priceTo) {
+    public void setPriceTo(Long priceTo) {
         this.priceTo = priceTo;
     }
 
-    public long getUserId() {
+    public Long getUserId() {
         return userId;
     }
 
-    public void setUserId(long userId) {
+    public void setUserId(Long userId) {
         this.userId = userId;
     }
 
@@ -155,6 +156,14 @@ public class PostItem {
 
     public void setGroupId(long groupId) {
         this.groupId = groupId;
+    }
+
+    public long getTotalLike() {
+        return totalLike;
+    }
+
+    public void setTotalLike(long totalLike) {
+        this.totalLike = totalLike;
     }
 
     public Date getExpiredAt() {
@@ -189,11 +198,11 @@ public class PostItem {
         this.images = images;
     }
 
-    public long getTotalLike() {
-        return totalLike;
+    public Boolean getLiked() {
+        return liked;
     }
 
-    public void setTotalLike(long totalLike) {
-        this.totalLike = totalLike;
+    public void setLiked(Boolean liked) {
+        this.liked = liked;
     }
 }

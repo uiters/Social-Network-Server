@@ -25,6 +25,7 @@ public class Post {
     private String district;
     private String address;
     private Long roomNumber;
+    private Long price;
     private Long priceFrom;
     private Long priceTo;
 
@@ -175,5 +176,13 @@ public class Post {
 
     public void setRoomNumber(Long roomNumber) {
         this.roomNumber = roomNumber;
+    }
+
+    public Long getPrice() {
+        return price;
+    }
+
+    public void setPrice(Long price) {
+        this.price = price;
     }
 }

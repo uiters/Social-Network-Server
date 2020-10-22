@@ -1,5 +1,6 @@
 HELP.md
 target/
+target/auth-server-0.0.1-SNAPSHOT.jar
 !.mvn/wrapper/maven-wrapper.jar
 
 !**/src/test/**/target/

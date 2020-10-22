@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import uit.core.dto.request.CommentRequest;
+import uit.core.dto.response.CommentItem;
 import uit.core.dto.response.CommentResponse;
 import uit.core.entity.Comment;
 import uit.core.service.CommentService;
@@ -23,13 +24,13 @@ public class CommentController {
 
     @PreAuthorize("#oauth2.hasScope('ui')")
     @PostMapping
-    public Comment create(@RequestBody CommentRequest commentRequest) {
+    public CommentItem create(@RequestBody CommentRequest commentRequest) {
         return commentService.create(commentRequest);
     }
 
     @PreAuthorize("#oauth2.hasScope('ui')")
     @PutMapping("/{id}")
-    public Comment update(@RequestBody Comment comment, @PathVariable Long id) {
+    public CommentItem update(@RequestBody Comment comment, @PathVariable Long id) {
         return commentService.update(comment, id);
     }
 
