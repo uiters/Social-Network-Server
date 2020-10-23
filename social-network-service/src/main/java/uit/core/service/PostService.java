@@ -132,6 +132,10 @@ public class PostService {
 
     public Post update(Post post, Long id) {
         post.setId(id);
+
+        User user = authServerFeign.getByUserName(SocialUtil.getCurrentUserEmail());
+        post.setUserId(user.getId());
+
         return postRepository.save(post);
     }
 
