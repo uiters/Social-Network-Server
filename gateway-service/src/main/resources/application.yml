@@ -15,10 +15,14 @@ eureka:
       hostname: localhost
 
 zuul:
+  hystrix.command.default.execution.isolation.thread.timeoutInMilliseconds: 50000
+  ribbon:
+    ConnectTimeout: 5000
+    ReadTimeout: 5000
   sensitiveHeaders: Cookie,Set-Cookie
   host:
-    connect-timeout-milllis: 200000000
-    socket-timeout-milllis: 200000000
+    connect-timeout-milllis: 5000
+    socket-timeout-milllis: 5000
   ignoredServices: '*'
   routes:
     social-network-service:

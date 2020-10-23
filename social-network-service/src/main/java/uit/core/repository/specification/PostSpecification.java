@@ -30,10 +30,16 @@ public class PostSpecification implements Specification<Post> {
         for (SearchCriteria criteria : list) {
             if (criteria.getOperation().equals(SearchOperation.EQUAL)) {
                 predicates.add(builder.equal(
-                        root.get(criteria.getKey()), criteria.getValue()));
-            } else if (criteria.getOperation().equals(SearchOperation.LIKE)) {
-                predicates.add(builder.like(
                         root.get(criteria.getKey()), criteria.getValue().toString()));
+            } else if (criteria.getOperation().equals(SearchOperation.LIKE)) {
+                if (root.get(criteria.getKey()).getJavaType().equals(String.class)) {
+                    predicates.add(builder.like(
+                            root.get(criteria.<String>getKey()), "%" + criteria.getValue().toString() + "%"));
+                } else {
+                    predicates.add(builder.equal(root.get(criteria.getKey()), criteria.getValue()));
+                }
+
+
             } else if (criteria.getOperation().equals(SearchOperation.LESS_THAN)) {
                 predicates.add(builder.lessThan(
                         root.get(criteria.getKey()), criteria.getValue().toString()));
