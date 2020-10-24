@@ -14,8 +14,19 @@ eureka:
     instance:
       hostname: localhost
 
+hystrix:
+  command:
+    default:
+      execution:
+        isolation:
+          thread:
+            timeoutInMilliseconds: 5000
+
+ribbon:
+  ConnectTimeout: 5000
+  ReadTimeout: 5000
+
 zuul:
-  hystrix.command.default.execution.isolation.thread.timeoutInMilliseconds: 50000
   ribbon:
     ConnectTimeout: 5000
     ReadTimeout: 5000

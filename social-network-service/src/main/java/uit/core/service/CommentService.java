@@ -43,6 +43,7 @@ public class CommentService {
             User user = authServerFeign.getById(comment.getUserId());
             commentItem.setUserId(user.getId());
             commentItem.setUsername(user.getUsername());
+            commentItem.setAvatar(user.getAvatar());
 
             commentItems.add(commentItem);
         }
@@ -76,6 +77,7 @@ public class CommentService {
         CommentItem commentItem = modelMapper.map(savedComment, CommentItem.class);
         commentItem.setUserId(user.getId());
         commentItem.setUsername(user.getUsername());
+        commentItem.setAvatar(user.getAvatar());
         return commentItem;
     }
 
@@ -89,6 +91,7 @@ public class CommentService {
         CommentItem commentItem = modelMapper.map(savedComment, CommentItem.class);
         commentItem.setUserId(user.getId());
         commentItem.setUsername(user.getUsername());
+        commentItem.setAvatar(user.getAvatar());
         return commentItem;
     }
 

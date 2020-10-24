@@ -38,6 +38,7 @@ public class LocalProfileConfig implements CommandLineRunner {
         user.setGender(1);
         user.setStatus(1);
         user.setRole(1);
+        user.setAvatar("https://uit-thesis-media-service.s3-ap-southeast-1.amazonaws.com/avatar.jpg");
 //        user.setUsername("tanduyht@gmail.com");
         user.setPassword(encoder.encode("abc123"));
         return user;
@@ -53,6 +54,7 @@ public class LocalProfileConfig implements CommandLineRunner {
         user.setRole(1);
         user.setUsername("DuyBeDeChua");
         user.setPassword(encoder.encode("abc123"));
+        user.setAvatar("https://uit-thesis-media-service.s3-ap-southeast-1.amazonaws.com/duybe.jpg");
         return user;
     }
 }

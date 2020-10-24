@@ -74,7 +74,7 @@ public class PostController {
 
     @PreAuthorize("#oauth2.hasScope('ui')")
     @PutMapping("/{id}")
-    public Post update(@RequestBody Post post, @PathVariable Long id) {
+    public PostItem update(@RequestBody Post post, @PathVariable Long id) {
         return postService.update(post, id);
     }
 

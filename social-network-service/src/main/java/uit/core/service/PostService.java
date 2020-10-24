@@ -115,6 +115,8 @@ public class PostService {
         User user = authServerFeign.getById(post.getUserId());
         postItem.setUsername(user.getUsername());
         postItem.setImages(getListImagesOfPost(postItem.getId()));
+        postItem.setTotalLike(getTotalLikes(postItem.getId()));
+        postItem.setLiked(isLiked(postItem.getId()));
 
         return postItem;
     }
@@ -130,13 +132,24 @@ public class PostService {
         return postResponse;
     }
 
-    public Post update(Post post, Long id) {
+    public PostItem update(Post post, Long id) {
+        Post postDb = postRepository.findById(id).get();
         post.setId(id);
+        post.setCreatedAt(postDb.getCreatedAt());
 
         User user = authServerFeign.getByUserName(SocialUtil.getCurrentUserEmail());
         post.setUserId(user.getId());
 
-        return postRepository.save(post);
+        Post savedPost = postRepository.save(post);
+
+        PostItem postResponse = modelMapper.map(savedPost, PostItem.class);
+        postResponse.setUsername(user.getUsername());
+        postResponse.setUserId(user.getId());
+        postResponse.setImages(getListImagesOfPost(postResponse.getId()));
+        postResponse.setTotalLike(getTotalLikes(postResponse.getId()));
+        postResponse.setLiked(isLiked(postResponse.getId()));
+
+        return postResponse;
     }
 
     public void deleteById(Long id) {

@@ -12,7 +12,7 @@ services:
       MYSQL_PASSWORD: Secret12345@
 
   eureka-server:
-    build: ./eureka-server
+    image: 20041998/eureka-server
     container_name: eureka-server
     restart: on-failure
     ports:
@@ -21,7 +21,7 @@ services:
       - EUREKA_INSTANCE_HOSTNAME=eureka-server
 
   auth-server:
-    build: ./auth-server
+    image: 20041998/auth-server
     container_name: auth-server
     restart: on-failure
     ports:
@@ -34,7 +34,7 @@ services:
       - eureka-server
 
   social-network-service:
-    build: ./social-network-service
+    image: 20041998/social-network-service
     container_name: social-network-service
     ports:
       - 8080:8080
@@ -47,7 +47,7 @@ services:
       - media-service
 
   media-service:
-    build: ./media-service
+    image: 20041998/media-service
     container_name: media-service
     ports:
       - 8081:8081
@@ -58,7 +58,7 @@ services:
       - eureka-server
 
   gateway-service:
-    build: ./gateway-service
+    image: 20041998/gateway-service
     container_name: gateway-service
     restart: on-failure
     ports:
