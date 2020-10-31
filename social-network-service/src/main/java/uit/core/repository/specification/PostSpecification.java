@@ -26,26 +26,41 @@ public class PostSpecification implements Specification<Post> {
 
         //create a new predicate list
         List<Predicate> predicates = new ArrayList<>();
-
         for (SearchCriteria criteria : list) {
-            if (criteria.getOperation().equals(SearchOperation.EQUAL)) {
-                predicates.add(builder.equal(
-                        root.get(criteria.getKey()), criteria.getValue().toString()));
-            } else if (criteria.getOperation().equals(SearchOperation.LIKE)) {
                 if (root.get(criteria.getKey()).getJavaType().equals(String.class)) {
                     predicates.add(builder.like(
                             root.get(criteria.<String>getKey()), "%" + criteria.getValue().toString() + "%"));
                 } else {
-                    predicates.add(builder.equal(root.get(criteria.getKey()), criteria.getValue()));
+
+                        if (criteria.getKey().equals("priceFrom")) {
+                            if (isSeller(list)) {
+                                predicates.add(builder.greaterThanOrEqualTo(root.<Long>get("price"), Long.valueOf(criteria.getValue().toString())));
+                            } else {
+                                predicates.add(builder.greaterThanOrEqualTo(root.<Long>get("priceFrom"), Long.valueOf(criteria.getValue().toString())));
+                            }
+                        } else if (criteria.getKey().equals("priceTo")) {
+                            if (isSeller(list)) {
+                                predicates.add(builder.lessThanOrEqualTo(root.<Long>get("price"), Long.valueOf(criteria.getValue().toString())));
+                            } else {
+                                predicates.add(builder.lessThanOrEqualTo(root.<Long>get("priceTo"), Long.valueOf(criteria.getValue().toString())));
+                            }
+                        } else {
+                            predicates.add(builder.equal(root.get(criteria.getKey()), criteria.getValue()));
+                        }
+
                 }
+            }
 
-
-            } else if (criteria.getOperation().equals(SearchOperation.LESS_THAN)) {
-                predicates.add(builder.lessThan(
-                        root.get(criteria.getKey()), criteria.getValue().toString()));
-            };
-        }
 
         return builder.and(predicates.toArray(new Predicate[0]));
+    }
+
+    private boolean isSeller(List<SearchCriteria> list) {
+        for (SearchCriteria criteria : list) {
+            if (criteria.getKey().equals("typeBusiness")) {
+                if (criteria.getValue().equals("1") || criteria.getValue().equals("3")) return true;
+            }
+        }
+        return false;
     }
 }

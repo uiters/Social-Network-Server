@@ -12,6 +12,7 @@ import uit.core.util.SocialUtil;
 import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Transactional
@@ -42,7 +43,11 @@ public class LikeService {
     }
 
     public Like create(Like like) {
+
         User user = authServerFeign.getByUserName(SocialUtil.getCurrentUserEmail());
+        Optional<Like> optionalLike = likeRepository.findByUserIdAndPostId(user.getId(), like.getPostId());
+        if (optionalLike.isPresent()) return optionalLike.get();
+
         like.setUserId(user.getId());
         return likeRepository.save(like);
     }

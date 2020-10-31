@@ -9,11 +9,12 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import java.sql.Timestamp;
 import java.util.Collection;
+import java.util.Date;
 
 @Entity
 public class User implements UserDetails {
     @Id
-//    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
     private String username;
@@ -21,7 +22,7 @@ public class User implements UserDetails {
     private String password;
     private String avatar;
     private long gender;
-    private Timestamp birthday;
+    private Date birthday;
     private long status;
     private long role;
 
@@ -104,11 +105,11 @@ public class User implements UserDetails {
         this.gender = gender;
     }
 
-    public Timestamp getBirthday() {
+    public Date getBirthday() {
         return birthday;
     }
 
-    public void setBirthday(Timestamp birthday) {
+    public void setBirthday(Date birthday) {
         this.birthday = birthday;
     }
 

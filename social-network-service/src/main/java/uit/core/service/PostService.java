@@ -203,7 +203,7 @@ public class PostService {
         return postResponse;
     }
 
-    public PostResponse search(int page, int limit, String title, String description, String typeBusiness, String typeProperty, String area, String district, String address, String roomNumber, String priceFrom, String priceTo, String expiredAt, String price) {
+    public PostResponse search(int page, int limit, String title, String description, String typeBusiness, String typeProperty, String area, String district, String address, String roomNumber, String priceFrom, String priceTo, String expiredAt, String price, String userId) {
         PostSpecification postSpecification = new PostSpecification();
         if (!StringUtils.isEmpty(title)) {
             postSpecification.add(new SearchCriteria("title", title, SearchOperation.LIKE));
@@ -212,7 +212,7 @@ public class PostService {
             postSpecification.add(new SearchCriteria("description", description, SearchOperation.LIKE));
         }
         if (!StringUtils.isEmpty(typeBusiness)) {
-            postSpecification.add(new SearchCriteria("typeBusiness", typeBusiness, SearchOperation.LIKE));
+           postSpecification.add(new SearchCriteria("typeBusiness", typeBusiness, SearchOperation.LIKE));
         }
         if (!StringUtils.isEmpty(typeProperty)) {
             postSpecification.add(new SearchCriteria("typeProperty", typeProperty, SearchOperation.LIKE));
@@ -237,6 +237,9 @@ public class PostService {
         }
         if (!StringUtils.isEmpty(price)) {
             postSpecification.add(new SearchCriteria("price", price, SearchOperation.LIKE));
+        }
+        if (!StringUtils.isEmpty(userId)) {
+            postSpecification.add(new SearchCriteria("userId", userId, SearchOperation.LIKE));
         }
 
         return searchAll(page, limit, postSpecification);

@@ -67,9 +67,10 @@ public class PostController {
             @RequestParam(defaultValue = "", required = false) String priceFrom,
             @RequestParam(defaultValue = "", required = false) String priceTo,
             @RequestParam(defaultValue = "", required = false) String price,
-            @RequestParam(defaultValue = "", required = false) String expiredAt
+            @RequestParam(defaultValue = "", required = false) String expiredAt,
+            @RequestParam(defaultValue = "", required = false) String userId
             ) throws ParseException {
-        return postService.search(page,limit, title, description, typeBusiness, typeProperty, area, district, address, roomNumber, priceFrom, priceTo, expiredAt, price);
+        return postService.search(page,limit, title, description, typeBusiness, typeProperty, area, district, address, roomNumber, priceFrom, priceTo, expiredAt, price, userId);
     }
 
     @PreAuthorize("#oauth2.hasScope('ui')")
