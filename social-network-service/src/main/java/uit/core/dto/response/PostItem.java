@@ -38,6 +38,8 @@ public class PostItem {
 
     private Boolean liked;
 
+    private String avatar;
+
     public long getId() {
         return id;
     }
@@ -204,5 +206,13 @@ public class PostItem {
 
     public void setLiked(Boolean liked) {
         this.liked = liked;
+    }
+
+    public String getAvatar() {
+        return avatar;
+    }
+
+    public void setAvatar(String avatar) {
+        this.avatar = avatar;
     }
 }

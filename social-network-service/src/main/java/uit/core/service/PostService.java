@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.hateoas.EntityModel;
@@ -57,7 +58,7 @@ public class PostService {
 
     public PostResponse getAll(int page, int limit) {
         PostResponse postResponse = new PostResponse();
-        Pageable paging = PageRequest.of(page, limit);
+        Pageable paging = PageRequest.of(page, limit, Sort.by(Sort.Direction.DESC, "createdAt"));
         Page<Post> response = postRepository.findAll(paging);
 
         List<PostItem> postItems = new ArrayList();
@@ -72,6 +73,9 @@ public class PostService {
             postItem.setImages(getListImagesOfPost(postItem.getId()));
             
             postItem.setLiked(isLiked(postItem.getId()));
+
+            postItem.setAvatar(user.getAvatar());
+
             postItems.add(postItem);
         }
 
@@ -117,7 +121,7 @@ public class PostService {
         postItem.setImages(getListImagesOfPost(postItem.getId()));
         postItem.setTotalLike(getTotalLikes(postItem.getId()));
         postItem.setLiked(isLiked(postItem.getId()));
-
+        postItem.setAvatar(user.getAvatar());
         return postItem;
     }
 
@@ -129,6 +133,7 @@ public class PostService {
         PostItem postResponse = modelMapper.map(savedPost, PostItem.class);
         postResponse.setUsername(user.getUsername());
         postResponse.setUserId(user.getId());
+        postResponse.setAvatar(user.getAvatar());
         return postResponse;
     }
 
@@ -148,7 +153,7 @@ public class PostService {
         postResponse.setImages(getListImagesOfPost(postResponse.getId()));
         postResponse.setTotalLike(getTotalLikes(postResponse.getId()));
         postResponse.setLiked(isLiked(postResponse.getId()));
-
+        postResponse.setAvatar(user.getAvatar());
         return postResponse;
     }
 
@@ -248,7 +253,7 @@ public class PostService {
 
     public PostResponse searchAll(int page, int limit, PostSpecification postSpecification) {
         PostResponse postResponse = new PostResponse();
-        Pageable paging = PageRequest.of(page, limit);
+        Pageable paging = PageRequest.of(page, limit, Sort.by(Sort.Direction.DESC, "createdAt"));
         Page<Post> response = postRepository.findAll(postSpecification, paging);
 
         List<PostItem> postItems = new ArrayList();
@@ -263,6 +268,9 @@ public class PostService {
             postItem.setImages(getListImagesOfPost(postItem.getId()));
 
             postItem.setLiked(isLiked(postItem.getId()));
+
+            postItem.setAvatar(user.getAvatar());
+
             postItems.add(postItem);
         }
 
