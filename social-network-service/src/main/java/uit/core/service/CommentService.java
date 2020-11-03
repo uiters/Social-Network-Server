@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import uit.core.dto.request.CommentRequest;
 import uit.core.dto.response.CommentItem;
@@ -12,10 +13,12 @@ import uit.core.dto.response.CommentResponse;
 import uit.core.dto.response.PostItem;
 import uit.core.dto.response.PostResponse;
 import uit.core.entity.Comment;
+import uit.core.entity.Notification;
 import uit.core.entity.Post;
 import uit.core.entity.User;
 import uit.core.feign.AuthServerFeign;
 import uit.core.repository.CommentRepository;
+import uit.core.repository.PostRepository;
 import uit.core.util.SocialUtil;
 
 import java.util.ArrayList;
@@ -26,10 +29,16 @@ public class CommentService {
     private static final ModelMapper modelMapper = new ModelMapper();
 
     @Autowired
+    private SimpMessagingTemplate simpMessagingTemplate;
+
+    @Autowired
     private CommentRepository commentRepository;
 
     @Autowired
     private AuthServerFeign authServerFeign;
+
+    @Autowired
+    private PostRepository postRepository;
 
     public CommentResponse getAll(long postId, int page, int limit) {
         CommentResponse commentResponse = new CommentResponse();
@@ -78,7 +87,27 @@ public class CommentService {
         commentItem.setUserId(user.getId());
         commentItem.setUsername(user.getUsername());
         commentItem.setAvatar(user.getAvatar());
+
+        pushNotification(commentItem, commentRequest.getPostId());
         return commentItem;
+    }
+
+    private void pushNotification(CommentItem commentItem, long postId) {
+        Notification notification = new Notification();
+        notification.setAvatar(commentItem.getAvatar());
+        notification.setMessage(commentItem.getUsername() + " đã bình luận về bài viết của bạn");
+        notification.setURL("/post/" + postId);
+
+        String username = getUserByPostId(postId);
+        //simpMessagingTemplate.convertAndSend("/topic/notification", notification);
+        //Client will subcribe at /user/queue/notification
+        simpMessagingTemplate.convertAndSendToUser(username, "queue/notification", notification);
+    }
+
+    private String getUserByPostId(long postId) {
+        Post post = postRepository.findById(postId).get();
+        User user = authServerFeign.getById(post.getUserId());
+        return user.getUsername();
     }
 
     public CommentItem update(Comment comment, Long id) {
