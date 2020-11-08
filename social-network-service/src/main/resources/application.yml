@@ -43,3 +43,12 @@ social:
   security:
     jwt-signer:
       signing-key: Social123
+
+logging:
+  level:
+    org:
+      springframework:
+        messaging: trace
+  web:
+    socket: trace
+

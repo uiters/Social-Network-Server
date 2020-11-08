@@ -30,7 +30,7 @@ public class UserController {
     }
 
     @PostMapping("/register")
-    public User create(@RequestBody User user) {
+    public User create(@RequestBody User user) throws Exception {
         return userService.create(user);
     }
 

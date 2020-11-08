@@ -1,6 +1,8 @@
 package uit.core.service;
 
 import org.modelmapper.ModelMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -27,6 +29,8 @@ import java.util.List;
 @Service
 public class CommentService {
     private static final ModelMapper modelMapper = new ModelMapper();
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(CommentService.class);
 
     @Autowired
     private SimpMessagingTemplate simpMessagingTemplate;
@@ -101,7 +105,10 @@ public class CommentService {
         String username = getUserByPostId(postId);
         //simpMessagingTemplate.convertAndSend("/topic/notification", notification);
         //Client will subcribe at /user/queue/notification
-        simpMessagingTemplate.convertAndSendToUser(username, "queue/notification", notification);
+        simpMessagingTemplate.convertAndSendToUser(username, "/notification/social", notification);
+        LOGGER.info("push notifiaction to client");
+        LOGGER.trace("push notifiaction to client");
+        LOGGER.debug("push notifiaction to client");
     }
 
     private String getUserByPostId(long postId) {

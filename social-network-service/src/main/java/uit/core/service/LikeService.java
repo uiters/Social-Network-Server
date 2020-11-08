@@ -2,11 +2,16 @@ package uit.core.service;
 
 import com.netflix.discovery.converters.Auto;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
+import uit.core.dto.response.CommentItem;
 import uit.core.entity.Like;
+import uit.core.entity.Notification;
+import uit.core.entity.Post;
 import uit.core.entity.User;
 import uit.core.feign.AuthServerFeign;
 import uit.core.repository.LikeRepository;
+import uit.core.repository.PostRepository;
 import uit.core.util.SocialUtil;
 
 import javax.transaction.Transactional;
@@ -22,6 +27,12 @@ public class LikeService {
 
     @Autowired
     private AuthServerFeign authServerFeign;
+
+    @Autowired
+    private PostRepository postRepository;
+
+    @Autowired
+    private SimpMessagingTemplate simpMessagingTemplate;
 
     public List<Like> getAll() {
         return likeRepository.findAll();
@@ -49,7 +60,28 @@ public class LikeService {
         if (optionalLike.isPresent()) return optionalLike.get();
 
         like.setUserId(user.getId());
+
+        pushNotification(user, like.getPostId());
+
         return likeRepository.save(like);
+    }
+
+    private void pushNotification(User user, long postId) {
+        Notification notification = new Notification();
+        notification.setAvatar(user.getAvatar());
+        notification.setMessage(user.getUsername() + " đã thích về bài viết của bạn");
+        notification.setURL("/post/" + postId);
+
+        String username = getUserByPostId(postId);
+
+        simpMessagingTemplate.convertAndSendToUser(username, "/notification/social", notification);
+
+    }
+
+    private String getUserByPostId(long postId) {
+        Post post = postRepository.findById(postId).get();
+        User user = authServerFeign.getById(post.getUserId());
+        return user.getUsername();
     }
 
     public Like update(Like like, Long id) {

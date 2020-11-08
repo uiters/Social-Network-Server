@@ -19,7 +19,7 @@ public class WebSocketConfiguration extends AbstractWebSocketMessageBrokerConfig
 
     @Override
     public void configureMessageBroker(MessageBrokerRegistry registry) {
-        registry.enableSimpleBroker("/topic","/queue","/user"); //enable an in-memory message broker to carry back message to the client
+        registry.enableSimpleBroker("/user", "/topic","/queue"); //enable an in-memory message broker to carry back message to the client
         registry.setApplicationDestinationPrefixes("/app"); //to filter destination apps annotated methods via @MessageBroker
     }
 }

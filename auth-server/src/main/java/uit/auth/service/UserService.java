@@ -9,10 +9,7 @@ import org.springframework.stereotype.Service;
 import uit.auth.entity.User;
 import uit.auth.repository.UserRepository;
 
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.List;
+import java.util.*;
 
 @Service
 public class UserService implements UserDetailsService {
@@ -29,7 +26,7 @@ public class UserService implements UserDetailsService {
         return userRepository.findById(id).get();
     }
 
-    public User create(User user) {
+    public User create(User user) throws Exception {
         user.setAvatar("https://uit-thesis-media-service.s3-ap-southeast-1.amazonaws.com/fb_avatar.png");
         user.setRole(1);
         user.setStatus(1);
@@ -37,8 +34,13 @@ public class UserService implements UserDetailsService {
         Date date = new GregorianCalendar(2000, Calendar.APRIL, 11).getTime();
         user.setBirthday(date);
         user.setPassword(encoder.encode(user.getPassword()));
-
+        checkIfUserExists(user.getUsername());
         return userRepository.save(user);
+    }
+
+    private void checkIfUserExists(String username) throws Exception {
+        Optional<User> user = userRepository.findByUsername(username);
+        if (user.isPresent()) throw new Exception("Username was exists");
     }
 
     public User update(User user, Long id) {
@@ -65,6 +67,6 @@ public class UserService implements UserDetailsService {
     }
 
     public User getByUsername(String username) {
-        return userRepository.findByUsername(username);
+        return userRepository.findByUsername(username).get();
     }
 }
