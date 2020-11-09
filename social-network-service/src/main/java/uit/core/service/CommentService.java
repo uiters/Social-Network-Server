@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import uit.core.dto.request.CommentRequest;
@@ -20,9 +21,11 @@ import uit.core.entity.Post;
 import uit.core.entity.User;
 import uit.core.feign.AuthServerFeign;
 import uit.core.repository.CommentRepository;
+import uit.core.repository.NotificationRepository;
 import uit.core.repository.PostRepository;
 import uit.core.util.SocialUtil;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -44,9 +47,14 @@ public class CommentService {
     @Autowired
     private PostRepository postRepository;
 
+    @Autowired
+    private NotificationRepository notificationRepository;
+
+    private final long LIKE =1;
+
     public CommentResponse getAll(long postId, int page, int limit) {
         CommentResponse commentResponse = new CommentResponse();
-        Pageable paging = PageRequest.of(page, limit);
+        Pageable paging = PageRequest.of(page, limit, Sort.by(Sort.Direction.DESC, "createdAt"));
         Page<Comment> response = commentRepository.findAllByPostId(postId, paging);
 
         List<CommentItem> commentItems = new ArrayList();
@@ -67,7 +75,7 @@ public class CommentService {
         } else {
             commentResponse.setHasNext(false);
         }
-        String nextLink = "/comment?&page=".concat(String.valueOf(page+1));
+        String nextLink = "/comment/" + String.valueOf(postId) + "?page=".concat(String.valueOf(page+1));
         commentResponse.setNextLink(nextLink);
 
         commentResponse.setPostId(postId);
@@ -101,20 +109,28 @@ public class CommentService {
         notification.setAvatar(commentItem.getAvatar());
         notification.setMessage(commentItem.getUsername() + " đã bình luận về bài viết của bạn");
         notification.setURL("/post/" + postId);
+        notification.setCreatedAt(LocalDateTime.now());
+        notification.setType(LIKE);
 
-        String username = getUserByPostId(postId);
+        User author = getUserByPostId(postId);
+
+        if (author.getId() == commentItem.getUserId()) return;
+
         //simpMessagingTemplate.convertAndSend("/topic/notification", notification);
         //Client will subcribe at /user/queue/notification
-        simpMessagingTemplate.convertAndSendToUser(username, "/notification/social", notification);
+        simpMessagingTemplate.convertAndSendToUser(author.getUsername(), "/notification/social", notification);
+
+        notification.setUserId(author.getId());
+        notificationRepository.save(notification);
         LOGGER.info("push notifiaction to client");
         LOGGER.trace("push notifiaction to client");
         LOGGER.debug("push notifiaction to client");
     }
 
-    private String getUserByPostId(long postId) {
+    private User getUserByPostId(long postId) {
         Post post = postRepository.findById(postId).get();
         User user = authServerFeign.getById(post.getUserId());
-        return user.getUsername();
+        return user;
     }
 
     public CommentItem update(Comment comment, Long id) {

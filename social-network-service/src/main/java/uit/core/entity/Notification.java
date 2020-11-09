@@ -1,9 +1,26 @@
 package uit.core.entity;
 
+import org.hibernate.annotations.CreationTimestamp;
+
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import java.time.LocalDateTime;
+import java.util.Date;
+
+@Entity
 public class Notification {
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id;
+
     private String message;
     private String URL;
     private String avatar;
+    private LocalDateTime createdAt;
+    private long type;
+    private long userId;
 
     public String getMessage() {
         return message;
@@ -28,4 +45,29 @@ public class Notification {
     public void setAvatar(String avatar) {
         this.avatar = avatar;
     }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public long getType() {
+        return type;
+    }
+
+    public void setType(long type) {
+        this.type = type;
+    }
+
+    public long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(long userId) {
+        this.userId = userId;
+    }
 }
+

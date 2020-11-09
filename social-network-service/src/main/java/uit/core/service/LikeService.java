@@ -11,10 +11,12 @@ import uit.core.entity.Post;
 import uit.core.entity.User;
 import uit.core.feign.AuthServerFeign;
 import uit.core.repository.LikeRepository;
+import uit.core.repository.NotificationRepository;
 import uit.core.repository.PostRepository;
 import uit.core.util.SocialUtil;
 
 import javax.transaction.Transactional;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -34,10 +36,14 @@ public class LikeService {
     @Autowired
     private SimpMessagingTemplate simpMessagingTemplate;
 
+    @Autowired
+    private NotificationRepository notificationRepository;
+
+    private final long COMMENT = 2;
+
     public List<Like> getAll() {
         return likeRepository.findAll();
     }
-
 
     public List<String> getAllOfPost(long postId) {
         List<String> result = new ArrayList();
@@ -71,17 +77,23 @@ public class LikeService {
         notification.setAvatar(user.getAvatar());
         notification.setMessage(user.getUsername() + " đã thích về bài viết của bạn");
         notification.setURL("/post/" + postId);
+        notification.setCreatedAt(LocalDateTime.now());
+        notification.setType(COMMENT);
 
-        String username = getUserByPostId(postId);
+        User author = getUserByPostId(postId);
 
-        simpMessagingTemplate.convertAndSendToUser(username, "/notification/social", notification);
+        if (author.getId() == user.getId()) return;
 
+        simpMessagingTemplate.convertAndSendToUser(author.getUsername(), "/notification/social", notification);
+
+        notification.setUserId(author.getId());
+        notificationRepository.save(notification);
     }
 
-    private String getUserByPostId(long postId) {
+    private User getUserByPostId(long postId) {
         Post post = postRepository.findById(postId).get();
         User user = authServerFeign.getById(post.getUserId());
-        return user.getUsername();
+        return user;
     }
 
     public Like update(Like like, Long id) {
