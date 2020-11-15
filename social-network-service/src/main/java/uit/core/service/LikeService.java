@@ -16,6 +16,7 @@ import uit.core.repository.PostRepository;
 import uit.core.util.SocialUtil;
 
 import javax.transaction.Transactional;
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -77,7 +78,7 @@ public class LikeService {
         notification.setAvatar(user.getAvatar());
         notification.setMessage(user.getUsername() + " đã thích về bài viết của bạn");
         notification.setURL("/post/" + postId);
-        notification.setCreatedAt(LocalDateTime.now());
+        notification.setCreatedAt(Timestamp.valueOf(LocalDateTime.now()));
         notification.setType(COMMENT);
 
         User author = getUserByPostId(postId);

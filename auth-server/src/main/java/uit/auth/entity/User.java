@@ -25,6 +25,8 @@ public class User implements UserDetails {
     private Date birthday;
     private long status;
     private long role;
+    private String hometown;
+    private String address;
 
     public Long getId() {
         return id;
@@ -127,5 +129,21 @@ public class User implements UserDetails {
 
     public void setRole(long role) {
         this.role = role;
+    }
+
+    public String getHometown() {
+        return hometown;
+    }
+
+    public void setHometown(String hometown) {
+        this.hometown = hometown;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
     }
 }

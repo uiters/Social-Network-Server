@@ -25,6 +25,7 @@ import uit.core.repository.NotificationRepository;
 import uit.core.repository.PostRepository;
 import uit.core.util.SocialUtil;
 
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -109,7 +110,7 @@ public class CommentService {
         notification.setAvatar(commentItem.getAvatar());
         notification.setMessage(commentItem.getUsername() + " đã bình luận về bài viết của bạn");
         notification.setURL("/post/" + postId);
-        notification.setCreatedAt(LocalDateTime.now());
+        notification.setCreatedAt(Timestamp.valueOf(LocalDateTime.now()));
         notification.setType(LIKE);
 
         User author = getUserByPostId(postId);

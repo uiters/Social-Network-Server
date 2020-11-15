@@ -49,6 +49,25 @@ public class AmazonS3Service {
         return fileUrl;
     }
 
+    public String uploadSingleFile(MultipartFile multipartFile) {
+        String fileUrl = "";
+        try {
+            File file = convertMultiPartToFile(multipartFile);
+            String fileName = generateFileName(multipartFile);
+            fileUrl = amazonS3Client.getEndpointUrl() + "/" + amazonS3Client.getBucketName() + "/" + fileName;
+            uploadFileTos3bucket(fileName, file);
+            file.delete();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        Image image = new Image();
+        image.setURL(fileUrl);
+        imageRepository.save(image);
+
+        return fileUrl;
+    }
+
     private File convertMultiPartToFile(MultipartFile file) throws IOException {
         File convFile = new File(file.getOriginalFilename());
         FileOutputStream fos = new FileOutputStream(convFile);

@@ -3,9 +3,11 @@ package uit.auth.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import uit.auth.entity.User;
 import uit.auth.service.UserService;
 
+import java.text.ParseException;
 import java.util.List;
 
 @RestController
@@ -35,8 +37,19 @@ public class UserController {
     }
 
     @PutMapping("/{id}")
-    public User update(@RequestBody User user, @PathVariable Long id) {
-        return userService.update(user, id);
+    public User update(@PathVariable Long id,
+                       @RequestParam(defaultValue = "", required = false) String username,
+                       @RequestParam(defaultValue = "", required = false) String email,
+                       @RequestParam(defaultValue = "", required = false) String password,
+                       @RequestParam(defaultValue = "", required = false) String gender,
+                       @RequestParam(defaultValue = "", required = false) String birthday,
+                       @RequestParam(defaultValue = "", required = false) String status,
+                       @RequestParam(defaultValue = "", required = false) String role,
+                       @RequestParam(defaultValue = "", required = false) String hometown,
+                       @RequestParam(defaultValue = "", required = false) String address,
+                       @RequestPart(value = "file", required = false) MultipartFile file
+                       ) throws ParseException {
+        return userService.update(id, username, email, password, gender, birthday, status, role, hometown, address, file);
     }
 
     @DeleteMapping("/{id}")

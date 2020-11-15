@@ -6,6 +6,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.Date;
 
@@ -18,7 +19,7 @@ public class Notification {
     private String message;
     private String URL;
     private String avatar;
-    private LocalDateTime createdAt;
+    private Timestamp createdAt;
     private long type;
     private long userId;
 
@@ -46,11 +47,19 @@ public class Notification {
         this.avatar = avatar;
     }
 
-    public LocalDateTime getCreatedAt() {
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public Timestamp getCreatedAt() {
         return createdAt;
     }
 
-    public void setCreatedAt(LocalDateTime createdAt) {
+    public void setCreatedAt(Timestamp createdAt) {
         this.createdAt = createdAt;
     }
 

@@ -6,9 +6,14 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
+import org.springframework.web.multipart.MultipartFile;
 import uit.auth.entity.User;
+import uit.auth.feign.MediaServiceFeign;
 import uit.auth.repository.UserRepository;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 @Service
@@ -17,6 +22,9 @@ public class UserService implements UserDetailsService {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private MediaServiceFeign mediaServiceFeign;
 
     public List<User> getAll() {
         return userRepository.findAll();
@@ -68,5 +76,42 @@ public class UserService implements UserDetailsService {
 
     public User getByUsername(String username) {
         return userRepository.findByUsername(username).get();
+    }
+
+    public User update(Long id, String username, String email, String password, String gender, String birthday, String status, String role, String hometown, String address, MultipartFile file) throws ParseException {
+        User currentUser = userRepository.findById(id).get();
+        if (!StringUtils.isEmpty(username)) {
+            currentUser.setUsername(username);
+        }
+        if (!StringUtils.isEmpty(email)) {
+            currentUser.setEmail(email);
+        }
+        if (!StringUtils.isEmpty(gender)) {
+            currentUser.setGender(Long.valueOf(gender));
+        }
+        if (!StringUtils.isEmpty(birthday)) {
+            Date formattedBirthday=new SimpleDateFormat("dd-MM-yyyy").parse(birthday);
+            currentUser.setBirthday(formattedBirthday);
+        }
+        if (!StringUtils.isEmpty(status)) {
+            currentUser.setStatus(Long.valueOf(status));
+        }
+        if (!StringUtils.isEmpty(role)) {
+            currentUser.setRole(Long.valueOf(role));
+        }
+        if (!StringUtils.isEmpty(hometown)) {
+            currentUser.setHometown(hometown);
+        }
+        if (!StringUtils.isEmpty(address)) {
+            currentUser.setAddress(address);
+        }
+        if (!StringUtils.isEmpty(password)) {
+            currentUser.setPassword(encoder.encode(password));
+        }
+        if (file!=null) {
+            String avatarUrl = mediaServiceFeign.uploadSingleFile(file);
+            currentUser.setAvatar(avatarUrl);
+        }
+        return userRepository.save(currentUser);
     }
 }

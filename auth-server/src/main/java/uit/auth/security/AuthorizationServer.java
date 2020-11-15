@@ -105,6 +105,7 @@ public class AuthorizationServer extends AuthorizationServerConfigurerAdapter {
     public JwtAccessTokenConverter jwtAccessTokenConverter(Environment env) {
         JwtAccessTokenConverter converter = new JwtAccessTokenConverter();
         converter.setSigningKey(env.getProperty("social.security.jwt-signer.signing-key"));
+
         return converter;
     }
 

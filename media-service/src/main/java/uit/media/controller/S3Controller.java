@@ -19,10 +19,10 @@ public class S3Controller {
     @Autowired
     private AmazonS3Service amazonS3Service;
 
-//    @PostMapping("/upload")
-//    public String uploadFile(@RequestPart(value = "file") MultipartFile file) {
-//        return this.amazonS3Service.uploadFile(file);
-//    }
+    @PostMapping("/upload/single")
+    public String uploadFile(@RequestPart(value = "file") MultipartFile file) {
+        return this.amazonS3Service.uploadSingleFile(file);
+    }
 
     @PostMapping("/upload/{postId}")
     public List<String> uploadMultipleFile(@RequestPart(value = "images") MultipartFile[] images,
