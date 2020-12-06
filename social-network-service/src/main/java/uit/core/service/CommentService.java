@@ -4,6 +4,7 @@ import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -19,10 +20,14 @@ import uit.core.entity.Comment;
 import uit.core.entity.Notification;
 import uit.core.entity.Post;
 import uit.core.entity.User;
+import uit.core.entity.event.UserAction;
+import uit.core.event.Action;
+import uit.core.event.CareEvent;
 import uit.core.feign.AuthServerFeign;
 import uit.core.repository.CommentRepository;
 import uit.core.repository.NotificationRepository;
 import uit.core.repository.PostRepository;
+import uit.core.repository.event.UserActionRepository;
 import uit.core.util.SocialUtil;
 
 import java.sql.Timestamp;
@@ -50,6 +55,12 @@ public class CommentService {
 
     @Autowired
     private NotificationRepository notificationRepository;
+
+    @Autowired
+    private UserActionRepository userActionRepository;
+
+    @Autowired
+    private ApplicationEventPublisher publisher;
 
     private final long LIKE =1;
 
@@ -102,7 +113,21 @@ public class CommentService {
         commentItem.setAvatar(user.getAvatar());
 
         pushNotification(commentItem, commentRequest.getPostId());
+
+        publishCommentEvent(commentItem, commentRequest.getPostId());
+
         return commentItem;
+    }
+
+    private void publishCommentEvent(CommentItem commentItem, long postId) {
+        UserAction userAction = new UserAction();
+        userAction.setUserId(commentItem.getUserId());
+        userAction.setActionId(Action.COMMENT.getCode());
+        userAction.setPostId(postId);
+
+        userActionRepository.save(userAction);
+
+        publisher.publishEvent(new CareEvent(this, userAction));
     }
 
     private void pushNotification(CommentItem commentItem, long postId) {

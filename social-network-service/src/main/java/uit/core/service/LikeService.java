@@ -2,17 +2,24 @@ package uit.core.service;
 
 import com.netflix.discovery.converters.Auto;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.ApplicationEventPublisherAware;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import uit.core.dto.response.CommentItem;
 import uit.core.entity.Like;
 import uit.core.entity.Notification;
 import uit.core.entity.Post;
 import uit.core.entity.User;
+import uit.core.entity.event.UserAction;
+import uit.core.event.Action;
+import uit.core.event.CareEvent;
 import uit.core.feign.AuthServerFeign;
 import uit.core.repository.LikeRepository;
 import uit.core.repository.NotificationRepository;
 import uit.core.repository.PostRepository;
+import uit.core.repository.event.UserActionRepository;
 import uit.core.util.SocialUtil;
 
 import javax.transaction.Transactional;
@@ -24,7 +31,16 @@ import java.util.Optional;
 
 @Service
 @Transactional
+@Component
 public class LikeService {
+    @Autowired
+    private ApplicationEventPublisher publisher;
+
+//    @Override
+//    public void setApplicationEventPublisher(ApplicationEventPublisher applicationEventPublisher) {
+//        this.publisher = applicationEventPublisher;
+//    }
+
     @Autowired
     private LikeRepository likeRepository;
 
@@ -39,6 +55,9 @@ public class LikeService {
 
     @Autowired
     private NotificationRepository notificationRepository;
+
+    @Autowired
+    private UserActionRepository userActionRepository;
 
     private final long COMMENT = 2;
 
@@ -70,7 +89,21 @@ public class LikeService {
 
         pushNotification(user, like.getPostId());
 
+        publishLikeEvent(like);
+
         return likeRepository.save(like);
+    }
+
+    private void publishLikeEvent(Like like) {
+        UserAction userAction = new UserAction();
+        userAction.setUserId(like.getUserId());
+        userAction.setActionId(Action.LIKE.getCode());
+        userAction.setPostId(like.getPostId());
+
+        userActionRepository.save(userAction);
+
+        publisher.publishEvent(new CareEvent(this, userAction));
+
     }
 
     private void pushNotification(User user, long postId) {
@@ -106,5 +139,6 @@ public class LikeService {
         User user = authServerFeign.getByUserName(SocialUtil.getCurrentUserEmail());
         likeRepository.deleteByPostIdAndUserId(like.getPostId(), user.getId());
     }
+
 
 }

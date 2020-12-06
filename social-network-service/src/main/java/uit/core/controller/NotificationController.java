@@ -2,11 +2,9 @@ package uit.core.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import uit.core.dto.response.NotificationResponse;
+import uit.core.entity.Notification;
 import uit.core.service.NotificationService;
 
 @RestController
@@ -19,5 +17,11 @@ public class NotificationController {
     @GetMapping
     public NotificationResponse getByUserId(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "15") int limit) {
         return notificationService.getByUserId(page, limit);
+    }
+
+    @PreAuthorize("#oauth2.hasScope('ui')")
+    @PostMapping("/read/{id}")
+    public Notification markAsReaded(@PathVariable long id) throws Exception {
+        return notificationService.markAsReaded(id);
     }
 }

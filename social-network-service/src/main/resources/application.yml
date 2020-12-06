@@ -43,6 +43,7 @@ social:
   security:
     jwt-signer:
       signing-key: Social123
+  initAction: true
 
 logging:
   level:

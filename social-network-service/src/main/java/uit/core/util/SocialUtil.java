@@ -2,6 +2,7 @@ package uit.core.util;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -14,6 +15,9 @@ import uit.core.feign.AuthServerFeign;
 public class SocialUtil {
     @Autowired
     private AuthServerFeign authServerFeign;
+
+    @Autowired
+    private SimpMessagingTemplate simpMessagingTemplate;
 
     private static final ModelMapper modelMapper = new ModelMapper();
 

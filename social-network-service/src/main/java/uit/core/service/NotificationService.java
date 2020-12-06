@@ -15,6 +15,8 @@ import uit.core.feign.AuthServerFeign;
 import uit.core.repository.NotificationRepository;
 import uit.core.util.SocialUtil;
 
+import java.util.Optional;
+
 @Service
 public class NotificationService {
     @Autowired
@@ -39,5 +41,15 @@ public class NotificationService {
         String nextLink = "/notification?page=".concat(String.valueOf(page+1));
         notiResponse.setNextLink(nextLink);
         return notiResponse;
+    }
+
+    public Notification markAsReaded(long id) throws Exception {
+        Optional<Notification> notificationOpt = notificationRepository.findById(id);
+        if (!notificationOpt.isPresent()) {
+            throw new Exception("notification id not found");
+        }
+        Notification notification = notificationOpt.get();
+        notification.setRead(true);
+        return notification;
     }
 }

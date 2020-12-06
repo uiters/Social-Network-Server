@@ -22,6 +22,7 @@ public class Notification {
     private Timestamp createdAt;
     private long type;
     private long userId;
+    private boolean read;
 
     public String getMessage() {
         return message;
@@ -77,6 +78,14 @@ public class Notification {
 
     public void setUserId(long userId) {
         this.userId = userId;
+    }
+
+    public boolean isRead() {
+        return read;
+    }
+
+    public void setRead(boolean read) {
+        this.read = read;
     }
 }
 
