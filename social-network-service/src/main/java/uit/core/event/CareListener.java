@@ -25,9 +25,12 @@ import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import java.util.logging.Logger;
 
 @Component
 public class CareListener implements ApplicationListener<CareEvent> {
+    private static final Logger LOGGER = Logger.getLogger(CareListener.class.getName());
+
     @Autowired
     private UserLevelRepository userLevelRepository;
 
@@ -51,6 +54,7 @@ public class CareListener implements ApplicationListener<CareEvent> {
 
     @Override
     public void onApplicationEvent(CareEvent careEvent) {
+        LOGGER.info("Event is happening: " + careEvent.toString());
         UserLevel userLevel = new UserLevel();
         UserAction userAction = careEvent.getUserAction();
 
@@ -80,6 +84,7 @@ public class CareListener implements ApplicationListener<CareEvent> {
         userLevelRepository.save(userLevel);
 
         if (level.getLevel() != currentLevel) {
+            LOGGER.info("Level upgrade");
             recommend(userAction, userLevel);
         }
 
@@ -87,6 +92,7 @@ public class CareListener implements ApplicationListener<CareEvent> {
 
     private void recommend(UserAction userAction, UserLevel userLevel) {
         RecommendationType recommendationType = RecommendationType.getRecommendationType(userLevel.getLevelId());
+        LOGGER.info("Recommendation type is " + recommendationType.getRecommendationAction());
         switch ((int) recommendationType.getRecommendationAction()) {
             case 1:
                 pushNotification(userLevel, userAction);
@@ -112,7 +118,10 @@ public class CareListener implements ApplicationListener<CareEvent> {
         notification.setCreatedAt(Timestamp.valueOf(LocalDateTime.now()));
         notification.setType(uit.core.event.Action.MEETING.getCode());
 
-        if (author.getId() == user.getId()) return;
+        if (author.getId() == user.getId()) {
+            LOGGER.info("user is author");
+            return;
+        }
 
         simpMessagingTemplate.convertAndSendToUser(author.getUsername(), "/notification/social", notification);
 
@@ -131,7 +140,10 @@ public class CareListener implements ApplicationListener<CareEvent> {
         notification.setCreatedAt(Timestamp.valueOf(LocalDateTime.now()));
         notification.setType(uit.core.event.Action.CHAT.getCode());
 
-        if (author.getId() == user.getId()) return;
+        if (author.getId() == user.getId()) {
+            LOGGER.info("user is author");
+            return;
+        }
 
         simpMessagingTemplate.convertAndSendToUser(author.getUsername(), "/notification/social", notification);
 
@@ -150,7 +162,10 @@ public class CareListener implements ApplicationListener<CareEvent> {
         notification.setCreatedAt(Timestamp.valueOf(LocalDateTime.now()));
         notification.setType(3);
 
-        if (author.getId() == user.getId()) return;
+        if (author.getId() == user.getId()) {
+            LOGGER.info("user is author");
+            return;
+        }
 
         simpMessagingTemplate.convertAndSendToUser(author.getUsername(), "/notification/social", notification);
 

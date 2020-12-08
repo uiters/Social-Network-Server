@@ -49,7 +49,7 @@ public class NotificationService {
             throw new Exception("notification id not found");
         }
         Notification notification = notificationOpt.get();
-        notification.setRead(true);
+        notification.setReaded(true);
         return notification;
     }
 }

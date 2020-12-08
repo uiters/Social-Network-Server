@@ -109,7 +109,7 @@ public class LikeService {
     private void pushNotification(User user, long postId) {
         Notification notification = new Notification();
         notification.setAvatar(user.getAvatar());
-        notification.setMessage(user.getUsername() + " đã thích về bài viết của bạn");
+        notification.setMessage(user.getUsername() + " đã thích bài viết của bạn");
         notification.setURL("/post/" + postId);
         notification.setCreatedAt(Timestamp.valueOf(LocalDateTime.now()));
         notification.setType(COMMENT);

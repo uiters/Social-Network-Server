@@ -2,10 +2,7 @@ package uit.core.entity;
 
 import org.hibernate.annotations.CreationTimestamp;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.Date;
@@ -22,7 +19,8 @@ public class Notification {
     private Timestamp createdAt;
     private long type;
     private long userId;
-    private boolean read;
+
+    private boolean isReaded;
 
     public String getMessage() {
         return message;
@@ -80,12 +78,12 @@ public class Notification {
         this.userId = userId;
     }
 
-    public boolean isRead() {
-        return read;
+    public boolean isReaded() {
+        return isReaded;
     }
 
-    public void setRead(boolean read) {
-        this.read = read;
+    public void setReaded(boolean readed) {
+        isReaded = readed;
     }
 }
 
