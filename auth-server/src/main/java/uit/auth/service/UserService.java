@@ -48,7 +48,7 @@ public class UserService implements UserDetailsService {
 
     private void checkIfUserExists(String username) throws Exception {
         Optional<User> user = userRepository.findByUsername(username);
-        if (user.isPresent()) throw new Exception("Username was exists");
+        if (user.isPresent()) throw new RuntimeException("Username was already used");
     }
 
     public User update(User user, Long id) {
