@@ -1,9 +1,9 @@
 package uit.core.event;
 
 public enum RecommendationType {
-    PUSH_NOTI(Level.START_INTERESTED,1),
-    CHAT(Level.INTERESTED, 2),
-    MEETING( Level.VERY_INTERESTED, 3);
+    PUSH_NOTI(Level.START_INTERESTED,3),
+    CHAT(Level.INTERESTED, 4),
+    MEETING( Level.VERY_INTERESTED, 5);
 
 
     private final Level level;

@@ -18,4 +18,11 @@ public class CareEvent extends ApplicationEvent {
     public void setUserAction(UserAction userAction) {
         this.userAction = userAction;
     }
+
+    @Override
+    public String toString() {
+        return "CareEvent{" +
+                "userAction=" + userAction +
+                '}';
+    }
 }

@@ -24,4 +24,15 @@ public class ErrorHandler {
         logger.info("Returning HTTP " + HttpStatus.INTERNAL_SERVER_ERROR, ex);
         return new ResponseEntity<ExceptionResponse>(response, HttpStatus.BAD_REQUEST);
     }
+
+    @ExceptionHandler(Exception.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ResponseEntity<ExceptionResponse> illegalArgument(Exception ex) {
+
+        ExceptionResponse response = new ExceptionResponse(new Date(), HttpStatus.INTERNAL_SERVER_ERROR.toString(),
+                ex.getMessage());
+
+        logger.info("Returning HTTP " + HttpStatus.INTERNAL_SERVER_ERROR, ex);
+        return new ResponseEntity<ExceptionResponse>(response, HttpStatus.BAD_REQUEST);
+    }
 }

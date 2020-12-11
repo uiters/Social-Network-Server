@@ -1,6 +1,7 @@
 package uit.core.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -11,8 +12,12 @@ import uit.core.dto.response.NotificationResponse;
 import uit.core.entity.Comment;
 import uit.core.entity.Notification;
 import uit.core.entity.User;
+import uit.core.entity.event.UserAction;
+import uit.core.event.Action;
+import uit.core.event.CareEvent;
 import uit.core.feign.AuthServerFeign;
 import uit.core.repository.NotificationRepository;
+import uit.core.repository.event.UserActionRepository;
 import uit.core.util.SocialUtil;
 
 import java.util.Optional;
@@ -24,6 +29,12 @@ public class NotificationService {
 
     @Autowired
     private AuthServerFeign authServerFeign;
+
+    @Autowired
+    private UserActionRepository userActionRepository;
+
+    @Autowired
+    private ApplicationEventPublisher publisher;
 
     public NotificationResponse getByUserId(int page, int limit) {
         User user = authServerFeign.getByUserName(SocialUtil.getCurrentUserEmail());
@@ -51,5 +62,20 @@ public class NotificationService {
         Notification notification = notificationOpt.get();
         notification.setReaded(true);
         return notification;
+    }
+
+    public UserAction readPost15s(long postId) {
+        User user = authServerFeign.getByUserName(SocialUtil.getCurrentUserEmail());
+
+        UserAction userAction = new UserAction();
+        userAction.setUserId(user.getId());
+        userAction.setActionId(Action.READ_15S.getCode());
+        userAction.setPostId(postId);
+
+        userActionRepository.save(userAction);
+
+        publisher.publishEvent(new CareEvent(this, userAction));
+
+        return userAction;
     }
 }

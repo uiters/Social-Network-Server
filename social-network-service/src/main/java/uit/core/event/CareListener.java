@@ -94,13 +94,13 @@ public class CareListener implements ApplicationListener<CareEvent> {
         RecommendationType recommendationType = RecommendationType.getRecommendationType(userLevel.getLevelId());
         LOGGER.info("Recommendation type is " + recommendationType.getRecommendationAction());
         switch ((int) recommendationType.getRecommendationAction()) {
-            case 1:
+            case 3:
                 pushNotification(userLevel, userAction);
                 break;
-            case 2:
+            case 4:
                 suggestChat(userLevel, userAction);
                 break;
-            case 3:
+            case 5:
                 suggestMeeting(userLevel, userAction);
                 break;
             default:
@@ -116,7 +116,7 @@ public class CareListener implements ApplicationListener<CareEvent> {
         notification.setMessage(user.getUsername() + " đang quan tâm về bài viết của bạn.Tạo Video Meeting và mời "+ user.getUsername() + " để trao đổi trực tiếp ?");
         notification.setURL("/post/" + userLevel.getPostId());
         notification.setCreatedAt(Timestamp.valueOf(LocalDateTime.now()));
-        notification.setType(uit.core.event.Action.MEETING.getCode());
+        notification.setType(RecommendationType.MEETING.getRecommendationAction());
 
         if (author.getId() == user.getId()) {
             LOGGER.info("user is author");
@@ -138,7 +138,7 @@ public class CareListener implements ApplicationListener<CareEvent> {
         notification.setMessage(user.getUsername() + " đang quan tâm về bài viết của bạn.Nhắn tin để trao đổi trực tiếp với " + user.getUsername() + " ?");
         notification.setURL("/post/" + userLevel.getPostId());
         notification.setCreatedAt(Timestamp.valueOf(LocalDateTime.now()));
-        notification.setType(uit.core.event.Action.CHAT.getCode());
+        notification.setType(RecommendationType.CHAT.getRecommendationAction());
 
         if (author.getId() == user.getId()) {
             LOGGER.info("user is author");
@@ -160,10 +160,10 @@ public class CareListener implements ApplicationListener<CareEvent> {
         notification.setMessage(user.getUsername() + " đang quan tâm về bài viết của bạn");
         notification.setURL("/post/" + userLevel.getPostId());
         notification.setCreatedAt(Timestamp.valueOf(LocalDateTime.now()));
-        notification.setType(3);
+        notification.setType(RecommendationType.PUSH_NOTI.getRecommendationAction());
 
         if (author.getId() == user.getId()) {
-            LOGGER.info("user is author");
+            LOGGER.info("user is author of a post. Not push notification.");
             return;
         }
 
@@ -198,7 +198,7 @@ public class CareListener implements ApplicationListener<CareEvent> {
             Action action = optionalAction.get();
             return action.getPoint();
         }
-        else throw new Exception("Action not define");
+        else throw new RuntimeException("Action not define");
 
     }
 }

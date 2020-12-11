@@ -3,8 +3,12 @@ package uit.core.service;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.netflix.discovery.converters.Auto;
 
+import org.hibernate.Session;
 import org.modelmapper.ModelMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -22,10 +26,16 @@ import uit.core.dto.response.PostResponse;
 import uit.core.entity.Image;
 import uit.core.entity.Post;
 import uit.core.entity.User;
+import uit.core.entity.UserPost;
+import uit.core.entity.event.UserAction;
+import uit.core.event.Action;
+import uit.core.event.CareEvent;
 import uit.core.feign.AuthServerFeign;
 import uit.core.feign.MediaServiceFeign;
 import uit.core.repository.LikeRepository;
 import uit.core.repository.PostRepository;
+import uit.core.repository.UserPostRepository;
+import uit.core.repository.event.UserActionRepository;
 import uit.core.repository.specification.PostSpecification;
 import uit.core.repository.specification.SearchCriteria;
 import uit.core.repository.specification.SearchOperation;
@@ -36,10 +46,13 @@ import java.util.Date;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class PostService {
     private static final ModelMapper modelMapper = new ModelMapper();
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(PostService.class);
 
     @Autowired
     private PostRepository postRepository;
@@ -55,6 +68,15 @@ public class PostService {
 
     @Autowired
     private MediaServiceFeign mediaServiceFeign;
+
+    @Autowired
+    private UserPostRepository userPostRepository;
+
+    @Autowired
+    private ApplicationEventPublisher publisher;
+
+    @Autowired
+    private UserActionRepository userActionRepository;
 
     public PostResponse getAll(int page, int limit) {
         PostResponse postResponse = new PostResponse();
@@ -283,5 +305,60 @@ public class PostService {
         String nextLink = "/post?&page=".concat(String.valueOf(page+1));
         postResponse.setNextLink(nextLink);
         return postResponse;
+    }
+
+    public UserPost savePostForLater(long postId) {
+        User user = authServerFeign.getByUserName(SocialUtil.getCurrentUserEmail());
+        Optional<UserPost> userPostOptional = userPostRepository.findByPostIdAndUserId(postId, user.getId());
+        if (userPostOptional.isPresent()) {
+            LOGGER.info("Post was already saved by user before");
+            return userPostOptional.get();
+        }
+
+        UserPost userPost = new UserPost();
+        userPost.setPostId(postId);
+        userPost.setUserId(user.getId());
+
+        publishEvent(userPost);
+
+        return userPostRepository.save(userPost);
+    }
+
+    private void publishEvent(UserPost userPost) {
+        UserAction userAction = new UserAction();
+        userAction.setUserId(userPost.getUserId());
+        userAction.setActionId(Action.SAVE_POST.getCode());
+        userAction.setPostId(userPost.getPostId());
+
+        publisher.publishEvent(new CareEvent(this, userAction));
+        userActionRepository.save(userAction);
+    }
+
+    public String deleteSavedPost(long postId) throws Exception {
+        User user = authServerFeign.getByUserName(SocialUtil.getCurrentUserEmail());
+        Optional<UserPost> userPostOptional = userPostRepository.findByPostIdAndUserId(postId, user.getId());
+        if (userPostOptional.isEmpty()) {
+            LOGGER.info("No saved post found for userId and postId");
+            throw new Exception("Saved Post not found with userId and postId");
+        }
+        userPostRepository.deleteById(userPostOptional.get().getId());
+        return "Delete saved post successfully";
+    }
+
+    public List<Post> getSavedPost() throws Exception {
+        User user = authServerFeign.getByUserName(SocialUtil.getCurrentUserEmail());
+        List<UserPost> userPosts = userPostRepository.findAllByUserId(user.getId());
+
+        List<Post> posts = new ArrayList<>();
+        for (UserPost userPost : userPosts) {
+            Optional<Post> post = postRepository.findById(userPost.getPostId());
+            if (!post.isPresent()) {
+                continue;
+            }
+            posts.add(post.get());
+        }
+        return posts;
+
+
     }
 }

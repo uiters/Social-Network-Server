@@ -27,8 +27,9 @@ public class InitAction implements CommandLineRunner {
     public void run(String... args) throws Exception {
         LOGGER.info("init default action");
         actionRepository.deleteAll();
-        defineActionLike();
-        defineActionComment();
+//        defineActionLike();
+//        defineActionComment();
+        defineAction();
         LOGGER.info("define action successfully");
 
         LOGGER.info("init level");
@@ -39,6 +40,15 @@ public class InitAction implements CommandLineRunner {
         LOGGER.info("init level successfully");
     }
 
+    private void defineAction() {
+        for (uit.core.event.Action actionItem : uit.core.event.Action.values()) {
+            Action action = new Action();
+            action.setAction(actionItem.getCode());
+            action.setPoint(actionItem.getPoint());
+            actionRepository.save(action);
+        }
+    }
+
     private void defineNoCareLevel() {
         Level level = new Level();
         level.setLevel(uit.core.event.Level.NO_CARE.getCode());
@@ -46,40 +56,28 @@ public class InitAction implements CommandLineRunner {
         levelRepository.save(level);
     }
 
-    private void defineVeryInterestedLevel() {
+    private void defineStartInterestedLevel() {
         Level level = new Level();
         level.setLevel(uit.core.event.Level.START_INTERESTED.getCode());
-        level.setActivePoint(10);
+        level.setActivePoint(5);
         levelRepository.save(level);
     }
 
     private void defineInterestedLevel() {
         Level level = new Level();
         level.setLevel(uit.core.event.Level.INTERESTED.getCode());
-        level.setActivePoint(60);
+        level.setActivePoint(8);
         levelRepository.save(level);
     }
 
-    private void defineStartInterestedLevel() {
+    private void defineVeryInterestedLevel() {
         Level level = new Level();
         level.setLevel(uit.core.event.Level.VERY_INTERESTED.getCode());
-        level.setActivePoint(100);
+        level.setActivePoint(11);
         levelRepository.save(level);
     }
 
-    private void defineActionComment() {
-        Action action = new Action();
-        action.setAction(uit.core.event.Action.COMMENT.getCode());
-        action.setPoint(20);
-        actionRepository.save(action);
-    }
 
-    private void defineActionLike() {
-        Action action = new Action();
-        action.setAction(uit.core.event.Action.LIKE.getCode());
-        action.setPoint(10);
-        actionRepository.save(action);
-    }
 
 
 }

@@ -5,6 +5,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import uit.core.dto.response.NotificationResponse;
 import uit.core.entity.Notification;
+import uit.core.entity.event.UserAction;
 import uit.core.service.NotificationService;
 
 @RestController
@@ -23,5 +24,11 @@ public class NotificationController {
     @PostMapping("/read/{id}")
     public Notification markAsReaded(@PathVariable long id) throws Exception {
         return notificationService.markAsReaded(id);
+    }
+
+    @PreAuthorize("#oauth2.hasScope('ui')")
+    @PostMapping("/read/count/{postId}")
+    public UserAction readPost15s(@PathVariable long postId) throws Exception {
+        return notificationService.readPost15s(postId);
     }
 }

@@ -11,6 +11,7 @@ import org.springframework.web.multipart.MultipartFile;
 import uit.core.dto.response.PostItem;
 import uit.core.dto.response.PostResponse;
 import uit.core.entity.Post;
+import uit.core.entity.UserPost;
 import uit.core.service.PostService;
 
 import java.security.Principal;
@@ -83,5 +84,23 @@ public class    PostController {
     @DeleteMapping("/{id}")
     public void deleteById(@PathVariable Long id) {
         postService.deleteById(id);
+    }
+
+    @PreAuthorize("#oauth2.hasScope('ui')")
+    @GetMapping("/savedPost")
+    public List<Post> getSavedPost() throws Exception {
+        return postService.getSavedPost();
+    }
+
+    @PreAuthorize("#oauth2.hasScope('ui')")
+    @PostMapping("/save/{postId}")
+    public UserPost savePostForLater(@PathVariable long postId) {
+        return postService.savePostForLater(postId);
+    }
+
+    @PreAuthorize("#oauth2.hasScope('ui')")
+    @PostMapping("/delete/{postId}")
+    public String deleteSavedPost(@PathVariable long postId) throws Exception {
+        return postService.deleteSavedPost(postId);
     }
 }
