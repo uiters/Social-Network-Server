@@ -27,9 +27,7 @@ public class SocialUtil {
             String currentUserName = authentication.getName();
             return currentUserName;
         }
-        throw new UsernameNotFoundException("Incorrect email");
+        throw new UsernameNotFoundException("User is not login yet or wrong username");
     }
-
-
 
 }

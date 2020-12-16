@@ -56,4 +56,19 @@ public class UserController {
     public void deleteById(@PathVariable Long id) {
         userService.deleteById(id);
     }
+
+    @PostMapping("/disable/{userId}")
+    public User disableUser(@PathVariable Long userId) throws Exception {
+        return userService.disableUser(userId);
+    }
+
+    @PostMapping("/enable/{userId}")
+    public User enableUser(@PathVariable Long userId) throws Exception {
+        return userService.enableUser(userId);
+    }
+
+    @GetMapping("/admin/test")
+    public String helloAdmin() {
+        return "Hello Admin";
+    }
 }

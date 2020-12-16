@@ -12,6 +12,8 @@ import uit.core.entity.event.Level;
 import uit.core.repository.event.ActionRepository;
 import uit.core.repository.event.LevelRepository;
 
+import java.util.Optional;
+
 @Configuration
 @ConditionalOnProperty(prefix = "social", name = "initAction", matchIfMissing = false)
 public class InitAction implements CommandLineRunner {
@@ -26,7 +28,6 @@ public class InitAction implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
         LOGGER.info("init default action");
-        actionRepository.deleteAll();
 //        defineActionLike();
 //        defineActionComment();
         defineAction();
@@ -45,35 +46,55 @@ public class InitAction implements CommandLineRunner {
             Action action = new Action();
             action.setAction(actionItem.getCode());
             action.setPoint(actionItem.getPoint());
+
+            Optional<Action> actionOptional = actionRepository.findByAction(action.getAction());
+            if (actionOptional.isPresent()) return;
+
             actionRepository.save(action);
         }
     }
 
     private void defineNoCareLevel() {
         Level level = new Level();
-        level.setLevel(uit.core.event.Level.NO_CARE.getCode());
+        level.setName("NO_CARE");
         level.setActivePoint(0);
+
+        Optional<Level> levelOptional = levelRepository.findByName(level.getName());
+        if (levelOptional.isPresent()) return;
+
         levelRepository.save(level);
     }
 
     private void defineStartInterestedLevel() {
         Level level = new Level();
-        level.setLevel(uit.core.event.Level.START_INTERESTED.getCode());
+        level.setName("START_INTERESTED");
         level.setActivePoint(5);
+
+        Optional<Level> levelOptional = levelRepository.findByName(level.getName());
+        if (levelOptional.isPresent()) return;
+
         levelRepository.save(level);
     }
 
     private void defineInterestedLevel() {
         Level level = new Level();
-        level.setLevel(uit.core.event.Level.INTERESTED.getCode());
+        level.setName("INTERESTED");
         level.setActivePoint(8);
+
+        Optional<Level> levelOptional = levelRepository.findByName(level.getName());
+        if (levelOptional.isPresent()) return;
+
         levelRepository.save(level);
     }
 
     private void defineVeryInterestedLevel() {
         Level level = new Level();
-        level.setLevel(uit.core.event.Level.VERY_INTERESTED.getCode());
+        level.setName("VERY_INTERESTED");
         level.setActivePoint(11);
+
+        Optional<Level> levelOptional = levelRepository.findByName(level.getName());
+        if (levelOptional.isPresent()) return;
+
         levelRepository.save(level);
     }
 

@@ -28,7 +28,7 @@ eureka:
       hostname: localhost
 
 social:
-  includeLocalDatabase: false
+  includeLocalDatabase: true
   security:
     jwt-signer:
       signing-key: Social123

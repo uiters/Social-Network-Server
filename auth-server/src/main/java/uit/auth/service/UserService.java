@@ -36,7 +36,6 @@ public class UserService implements UserDetailsService {
 
     public User create(User user) throws Exception {
         user.setAvatar("https://uit-thesis-media-service.s3-ap-southeast-1.amazonaws.com/fb_avatar.png");
-        user.setRole(1);
         user.setStatus(1);
         user.setGender(1);
         Date date = new GregorianCalendar(2000, Calendar.APRIL, 11).getTime();
@@ -67,7 +66,7 @@ public class UserService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        User user = userRepository.findByEmail(email);
+        User user = userRepository.findByEmail(email).get();
         if (user != null) {
             return user;
         }
@@ -96,9 +95,7 @@ public class UserService implements UserDetailsService {
         if (!StringUtils.isEmpty(status)) {
             currentUser.setStatus(Long.valueOf(status));
         }
-        if (!StringUtils.isEmpty(role)) {
-            currentUser.setRole(Long.valueOf(role));
-        }
+
         if (!StringUtils.isEmpty(hometown)) {
             currentUser.setHometown(hometown);
         }
@@ -113,5 +110,25 @@ public class UserService implements UserDetailsService {
             currentUser.setAvatar(avatarUrl);
         }
         return userRepository.save(currentUser);
+    }
+
+    public User disableUser(Long userId) throws Exception {
+        Optional<User> userOptional = userRepository.findById(userId);
+        if (userOptional.isEmpty()) {
+            throw new Exception("UserId not found");
+        }
+        User user = userOptional.get();
+        user.setStatus(0);
+        return userRepository.save(user);
+    }
+
+    public User enableUser(Long userId) throws Exception {
+        Optional<User> userOptional = userRepository.findById(userId);
+        if (userOptional.isEmpty()) {
+            throw new Exception("UserId not found");
+        }
+        User user = userOptional.get();
+        user.setStatus(1);
+        return userRepository.save(user);
     }
 }

@@ -1,27 +1,31 @@
 package uit.core.entity;
 
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.sql.Timestamp;
-import java.util.Collection;
+import java.util.*;
 
-public class User implements UserDetails {
+public class User {
     private Long id;
 
     private String username;
-
     private String email;
     private String password;
     private String avatar;
     private long gender;
-    private Timestamp birthday;
-    private long status;
-    private long role;
+    private Date birthday;
+    private long status =1;
+    private String hometown;
+    private String address;
+
+    private Set<Role> roles = new HashSet<>();
+
+    public User() {
+        super();
+    }
 
     public Long getId() {
         return id;
@@ -31,36 +35,57 @@ public class User implements UserDetails {
         this.id = id;
     }
 
-    @Override
-    public String getUsername() {
-        return username;
+    public String getName() {
+        return this.username;
     }
 
-    @Override
+//    public List<String> getAuthorities() {
+//        Set<Role> roles = this.getRoles();
+//        List<String> authorities = new ArrayList<>();
+//
+//        for (Role role : roles) {
+//            authorities.add(role.getName());
+//        }
+//
+//        return authorities;
+//    }
+
+    public Set<Role> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(Set<Role> roles) {
+        this.roles = roles;
+    }
+
+    //@Override
+    public String getUsername() {
+        return this.username;
+    }
+
+    //@Override
     public boolean isAccountNonExpired() {
         return true;
     }
 
-    @Override
+    //@Override
     public boolean isAccountNonLocked() {
         return true;
     }
 
-    @Override
+    //@Override
     public boolean isCredentialsNonExpired() {
         return true;
     }
 
-    @Override
+    //@Override
     public boolean isEnabled() {
-        return true;
+        return status == 1;
     }
 
     public void setUsername(String username) {
         this.username = username;
     }
-
-
 
     public String getEmail() {
         return email;
@@ -70,12 +95,7 @@ public class User implements UserDetails {
         this.email = email;
     }
 
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return null;
-    }
-
-    @Override
+    //@Override
     public String getPassword() {
         return password;
     }
@@ -100,11 +120,11 @@ public class User implements UserDetails {
         this.gender = gender;
     }
 
-    public Timestamp getBirthday() {
+    public Date getBirthday() {
         return birthday;
     }
 
-    public void setBirthday(Timestamp birthday) {
+    public void setBirthday(Date birthday) {
         this.birthday = birthday;
     }
 
@@ -116,11 +136,19 @@ public class User implements UserDetails {
         this.status = status;
     }
 
-    public long getRole() {
-        return role;
+    public String getHometown() {
+        return hometown;
     }
 
-    public void setRole(long role) {
-        this.role = role;
+    public void setHometown(String hometown) {
+        this.hometown = hometown;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
     }
 }

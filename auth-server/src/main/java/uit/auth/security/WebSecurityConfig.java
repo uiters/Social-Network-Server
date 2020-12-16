@@ -28,12 +28,23 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.csrf().disable();
-
-                 ;
+//            .httpBasic()
+//            .and()
+//            .authorizeRequests()
+//            .antMatchers("/**").hasAnyAuthority("USER", "ADMIN")
+//            .antMatchers("/admin/*").hasAnyAuthority("ADMIN")
+//            .anyRequest().authenticated()
+//            .and()
+//            .formLogin().permitAll()
+//            .and()
+//            .logout().permitAll()
+//            .and()
+//            .exceptionHandling().accessDeniedPage("/403");
     }
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth.userDetailsService(userService).passwordEncoder(new BCryptPasswordEncoder());
     }
+
 }

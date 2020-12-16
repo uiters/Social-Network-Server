@@ -11,8 +11,17 @@ public class Level {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
 
-    private long level;
     private long activePoint;
+
+    private String name;
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
 
     public long getId() {
         return id;
@@ -20,14 +29,6 @@ public class Level {
 
     public void setId(long id) {
         this.id = id;
-    }
-
-    public long getLevel() {
-        return level;
-    }
-
-    public void setLevel(long level) {
-        this.level = level;
     }
 
     public long getActivePoint() {

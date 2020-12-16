@@ -78,4 +78,19 @@ public class NotificationService {
 
         return userAction;
     }
+
+    public UserAction readDetailPost(long postId) {
+        User user = authServerFeign.getByUserName(SocialUtil.getCurrentUserEmail());
+
+        UserAction userAction = new UserAction();
+        userAction.setUserId(user.getId());
+        userAction.setActionId(Action.READ_DETAIL.getCode());
+        userAction.setPostId(postId);
+
+        userActionRepository.save(userAction);
+
+        publisher.publishEvent(new CareEvent(this, userAction));
+
+        return userAction;
+    }
 }

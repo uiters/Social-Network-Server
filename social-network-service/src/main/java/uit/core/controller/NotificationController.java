@@ -31,4 +31,10 @@ public class NotificationController {
     public UserAction readPost15s(@PathVariable long postId) throws Exception {
         return notificationService.readPost15s(postId);
     }
+
+    @PreAuthorize("#oauth2.hasScope('ui')")
+    @PostMapping("/read/detail/{postId}")
+    public UserAction readDetailPost(@PathVariable long postId) throws Exception {
+        return notificationService.readDetailPost(postId);
+    }
 }

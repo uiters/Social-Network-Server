@@ -1,15 +1,12 @@
 package uit.auth.entity;
 
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.sql.Timestamp;
-import java.util.Collection;
-import java.util.Date;
+import java.util.*;
 
 @Entity
 public class User implements UserDetails {
@@ -23,10 +20,30 @@ public class User implements UserDetails {
     private String avatar;
     private long gender;
     private Date birthday;
-    private long status;
-    private long role;
+    private long status =1;
     private String hometown;
     private String address;
+
+    public User() {
+        super();
+    }
+
+    /*
+    CascadeType.PERSIST: when we save User, role will also be saved
+    CascadeType.MERGE: first loads both user and role and update both
+    CascadeType.DELETE: delete both user and role
+    ...
+    FetchType.EAGER: always load
+    FetchType.LAZY: load when you need
+
+     */
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "users_roles", //name of join table
+            joinColumns = @JoinColumn(name = "user_id"), //foreign key in join table
+            inverseJoinColumns = @JoinColumn(name = "role_id")
+    )
+    private Set<Role> roles = new HashSet<>();
 
     public Long getId() {
         return id;
@@ -38,6 +55,26 @@ public class User implements UserDetails {
 
     public String getName() {
         return this.username;
+    }
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        Set<Role> roles = this.getRoles();
+        List<SimpleGrantedAuthority> authorities = new ArrayList<>();
+
+        for (Role role : roles) {
+            authorities.add(new SimpleGrantedAuthority(role.getName()));
+        }
+
+        return authorities;
+    }
+
+    public Set<Role> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(Set<Role> roles) {
+        this.roles = roles;
     }
 
     @Override
@@ -62,7 +99,7 @@ public class User implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return true;
+        return status == 1;
     }
 
     public void setUsername(String username) {
@@ -75,11 +112,6 @@ public class User implements UserDetails {
 
     public void setEmail(String email) {
         this.email = email;
-    }
-
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return null;
     }
 
     @Override
@@ -121,14 +153,6 @@ public class User implements UserDetails {
 
     public void setStatus(long status) {
         this.status = status;
-    }
-
-    public long getRole() {
-        return role;
-    }
-
-    public void setRole(long role) {
-        this.role = role;
     }
 
     public String getHometown() {

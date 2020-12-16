@@ -4,7 +4,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Component;
-import uit.core.dto.request.EventRequest;
 import uit.core.entity.Notification;
 import uit.core.entity.Post;
 import uit.core.entity.User;
@@ -18,7 +17,6 @@ import uit.core.repository.PostRepository;
 import uit.core.repository.event.ActionRepository;
 import uit.core.repository.event.LevelRepository;
 import uit.core.repository.event.UserLevelRepository;
-import uit.core.util.SocialUtil;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
@@ -79,31 +77,37 @@ public class CareListener implements ApplicationListener<CareEvent> {
 
         Level level = caculateLevel(userLevel);
 
-        userLevel.setLevelId(level.getLevel());
+        userLevel.setLevelId(level.getId());
 
         userLevelRepository.save(userLevel);
 
-        if (level.getLevel() != currentLevel) {
-            LOGGER.info("Level upgrade");
-            recommend(userAction, userLevel);
+        if (level.getId() != currentLevel) {
+            LOGGER.info("Level changed to " + level.getName());
+            try {
+                recommend(userAction, userLevel, level);
+            } catch (Exception e) {
+                LOGGER.info("Not define recommend action for level " + level.getName());
+            }
         }
 
     }
 
-    private void recommend(UserAction userAction, UserLevel userLevel) {
-        RecommendationType recommendationType = RecommendationType.getRecommendationType(userLevel.getLevelId());
-        LOGGER.info("Recommendation type is " + recommendationType.getRecommendationAction());
-        switch ((int) recommendationType.getRecommendationAction()) {
-            case 3:
+    private void recommend(UserAction userAction, UserLevel userLevel, Level level) throws Exception {
+        //RecommendationType recommendationType = RecommendationType.getRecommendationType(userLevel.getLevelId());
+        LOGGER.info("Recommendation type is " + level.getName());
+
+        switch (level.getName()) {
+            case "START_INTERESTED":
                 pushNotification(userLevel, userAction);
                 break;
-            case 4:
+            case "INTERESTED":
                 suggestChat(userLevel, userAction);
                 break;
-            case 5:
+            case "VERY_INTERESTED":
                 suggestMeeting(userLevel, userAction);
                 break;
             default:
+                throw new Exception("Not define recommend action for level " + level.getName() );
         }
     }
 
