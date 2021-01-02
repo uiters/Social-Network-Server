@@ -7,9 +7,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-import uit.core.dto.response.CommentResponse;
 import uit.core.dto.response.NotificationResponse;
-import uit.core.entity.Comment;
 import uit.core.entity.Notification;
 import uit.core.entity.User;
 import uit.core.entity.event.UserAction;
@@ -20,6 +18,7 @@ import uit.core.repository.NotificationRepository;
 import uit.core.repository.event.UserActionRepository;
 import uit.core.util.SocialUtil;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -54,14 +53,29 @@ public class NotificationService {
         return notiResponse;
     }
 
-    public Notification markAsReaded(long id) throws Exception {
+    public Notification markAsRead(long id) throws Exception {
         Optional<Notification> notificationOpt = notificationRepository.findById(id);
         if (!notificationOpt.isPresent()) {
             throw new Exception("notification id not found");
         }
         Notification notification = notificationOpt.get();
-        notification.setReaded(true);
+        notification.setMarkAsRead(true);
+        notificationRepository.save(notification);
         return notification;
+    }
+
+    public List<Notification> markAsReadForAllNotiOfUser() {
+        User user = authServerFeign.getByUserName(SocialUtil.getCurrentUserEmail());
+
+        List<Notification> notifications = notificationRepository.findAllByUserId(user.getId());
+
+        for (Notification notification : notifications) {
+            notification.setMarkAsRead(true);
+            notificationRepository.save(notification);
+        }
+
+
+        return notifications;
     }
 
     public UserAction readPost15s(long postId) {
@@ -93,4 +107,6 @@ public class NotificationService {
 
         return userAction;
     }
+
+
 }

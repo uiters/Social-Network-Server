@@ -88,7 +88,7 @@ public class    PostController {
 
     @PreAuthorize("#oauth2.hasScope('ui')")
     @GetMapping("/savedPost")
-    public List<Post> getSavedPost() throws Exception {
+    public List<PostItem> getSavedPost() throws Exception {
         return postService.getSavedPost();
     }
 

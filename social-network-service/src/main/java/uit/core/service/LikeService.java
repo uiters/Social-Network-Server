@@ -113,6 +113,7 @@ public class LikeService {
         notification.setURL("/post/" + postId);
         notification.setCreatedAt(Timestamp.valueOf(LocalDateTime.now()));
         notification.setType(COMMENT);
+        notification.setSecondUserId(user.getId());
 
         User author = getUserByPostId(postId);
 

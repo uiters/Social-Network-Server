@@ -1,11 +1,7 @@
 package uit.core.entity;
 
-import org.hibernate.annotations.CreationTimestamp;
-
 import javax.persistence.*;
 import java.sql.Timestamp;
-import java.time.LocalDateTime;
-import java.util.Date;
 
 @Entity
 public class Notification {
@@ -20,7 +16,17 @@ public class Notification {
     private long type;
     private long userId;
 
-    private boolean isReaded;
+    private long secondUserId;
+
+    public long getSecondUserId() {
+        return secondUserId;
+    }
+
+    public void setSecondUserId(long secondUserId) {
+        this.secondUserId = secondUserId;
+    }
+
+    private boolean markAsRead;
 
     public String getMessage() {
         return message;
@@ -78,12 +84,12 @@ public class Notification {
         this.userId = userId;
     }
 
-    public boolean isReaded() {
-        return isReaded;
+    public boolean isMarkAsRead() {
+        return markAsRead;
     }
 
-    public void setReaded(boolean readed) {
-        isReaded = readed;
+    public void setMarkAsRead(boolean markAsRead) {
+        this.markAsRead = markAsRead;
     }
 }
 

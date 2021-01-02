@@ -121,6 +121,7 @@ public class CareListener implements ApplicationListener<CareEvent> {
         notification.setURL("/post/" + userLevel.getPostId());
         notification.setCreatedAt(Timestamp.valueOf(LocalDateTime.now()));
         notification.setType(RecommendationType.MEETING.getRecommendationAction());
+        notification.setSecondUserId(user.getId());
 
         if (author.getId() == user.getId()) {
             LOGGER.info("user is author");
@@ -143,6 +144,7 @@ public class CareListener implements ApplicationListener<CareEvent> {
         notification.setURL("/post/" + userLevel.getPostId());
         notification.setCreatedAt(Timestamp.valueOf(LocalDateTime.now()));
         notification.setType(RecommendationType.CHAT.getRecommendationAction());
+        notification.setSecondUserId(user.getId());
 
         if (author.getId() == user.getId()) {
             LOGGER.info("user is author");
@@ -165,6 +167,7 @@ public class CareListener implements ApplicationListener<CareEvent> {
         notification.setURL("/post/" + userLevel.getPostId());
         notification.setCreatedAt(Timestamp.valueOf(LocalDateTime.now()));
         notification.setType(RecommendationType.PUSH_NOTI.getRecommendationAction());
+        notification.setSecondUserId(user.getId());
 
         if (author.getId() == user.getId()) {
             LOGGER.info("user is author of a post. Not push notification.");

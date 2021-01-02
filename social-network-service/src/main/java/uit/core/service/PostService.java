@@ -85,18 +85,7 @@ public class PostService {
 
         List<PostItem> postItems = new ArrayList();
         for (Post post : response.getContent()) {
-            PostItem postItem = modelMapper.map(post, PostItem.class);
-
-            User user = authServerFeign.getById(post.getUserId());
-            postItem.setUsername(user.getUsername());
-
-            postItem.setTotalLike(getTotalLikes(postItem.getId()));
-
-            postItem.setImages(getListImagesOfPost(postItem.getId()));
-            
-            postItem.setLiked(isLiked(postItem.getId()));
-
-            postItem.setAvatar(user.getAvatar());
+            PostItem postItem = populatePostResponse(post);
 
             postItems.add(postItem);
         }
@@ -345,20 +334,41 @@ public class PostService {
         return "Delete saved post successfully";
     }
 
-    public List<Post> getSavedPost() throws Exception {
+    public List<PostItem> getSavedPost() throws Exception {
         User user = authServerFeign.getByUserName(SocialUtil.getCurrentUserEmail());
         List<UserPost> userPosts = userPostRepository.findAllByUserId(user.getId());
 
-        List<Post> posts = new ArrayList<>();
+        List<PostItem> posts = new ArrayList<>();
         for (UserPost userPost : userPosts) {
             Optional<Post> post = postRepository.findById(userPost.getPostId());
             if (!post.isPresent()) {
                 continue;
             }
-            posts.add(post.get());
+            PostItem postItem = populatePostResponse(post.get());
+
+            posts.add(postItem);
         }
+
         return posts;
 
+
+    }
+
+    private PostItem populatePostResponse(Post post) {
+            PostItem postItem = modelMapper.map(post, PostItem.class);
+
+            User user = authServerFeign.getById(post.getUserId());
+            postItem.setUsername(user.getUsername());
+
+            postItem.setTotalLike(getTotalLikes(postItem.getId()));
+
+            postItem.setImages(getListImagesOfPost(postItem.getId()));
+
+            postItem.setLiked(isLiked(postItem.getId()));
+
+            postItem.setAvatar(user.getAvatar());
+
+            return postItem;
 
     }
 }

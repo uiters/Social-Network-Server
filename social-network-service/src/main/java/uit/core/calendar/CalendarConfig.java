@@ -5,6 +5,7 @@ import com.google.api.client.extensions.java6.auth.oauth2.AuthorizationCodeInsta
 import com.google.api.client.extensions.jetty.auth.oauth2.LocalServerReceiver;
 import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeFlow;
 import com.google.api.client.googleapis.auth.oauth2.GoogleClientSecrets;
+import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
 import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.JsonFactory;
@@ -17,10 +18,7 @@ import com.google.api.services.calendar.model.*;
 import org.springframework.boot.CommandLineRunner;
 import uit.core.dto.request.EventRequest;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -37,7 +35,7 @@ public class CalendarConfig implements CommandLineRunner {
      * If modifying these scopes, delete your previously saved tokens/ folder.
      */
     private static final List<String> SCOPES = Collections.singletonList(CalendarScopes.CALENDAR);
-    private static final String CREDENTIALS_FILE_PATH = "/credentials.json";
+    private static final String CREDENTIALS_FILE_PATH = "/client_secrets.json";
     private static Calendar service;
 
     @Override
@@ -51,6 +49,7 @@ public class CalendarConfig implements CommandLineRunner {
      * @return An authorized Credential object.
      * @throws IOException If the credentials.json file cannot be found.
      */
+    /** Authorizes the installed application to access user's protected data. */
     private static Credential getCredentials(final NetHttpTransport HTTP_TRANSPORT) throws IOException {
         // Load client secrets.
         InputStream in = CalendarConfig.class.getResourceAsStream(CREDENTIALS_FILE_PATH);
@@ -63,15 +62,23 @@ public class CalendarConfig implements CommandLineRunner {
         GoogleAuthorizationCodeFlow flow = new GoogleAuthorizationCodeFlow.Builder(
                 HTTP_TRANSPORT, JSON_FACTORY, clientSecrets, SCOPES)
                 .setDataStoreFactory(new FileDataStoreFactory(new java.io.File(TOKENS_DIRECTORY_PATH)))
-                .setAccessType("offline")
+//                .setAccessType("offline")
                 .build();
         LocalServerReceiver receiver = new LocalServerReceiver.Builder().setPort(4200).build();
         return new AuthorizationCodeInstalledApp(flow, receiver).authorize("user");
     }
 
+    private static GoogleCredential getGoogleCredential() throws IOException {
+        InputStream in = CalendarConfig.class.getResourceAsStream(CREDENTIALS_FILE_PATH);
+        GoogleCredential credential = GoogleCredential.fromStream(in)
+                .createScoped(SCOPES);
+//                .createDelegated("tanduyht@gmail.com");
+        return credential;
+    }
+
     public static Event createEvent(EventRequest eventRequest) throws IOException, GeneralSecurityException {
         final NetHttpTransport HTTP_TRANSPORT = GoogleNetHttpTransport.newTrustedTransport();
-        service = new Calendar.Builder(HTTP_TRANSPORT, JSON_FACTORY, getCredentials(HTTP_TRANSPORT))
+        service = new Calendar.Builder(HTTP_TRANSPORT, JSON_FACTORY, getGoogleCredential())
                 .setApplicationName(APPLICATION_NAME)
                 .build();
 
@@ -98,7 +105,6 @@ public class CalendarConfig implements CommandLineRunner {
         event.setAttendees(attendees);
 
         event.setConferenceData(buildConferenceData());
-
 
         String calendarId = "primary";
         event = service.events().insert(calendarId, event).setSendNotifications(true).setConferenceDataVersion(1)

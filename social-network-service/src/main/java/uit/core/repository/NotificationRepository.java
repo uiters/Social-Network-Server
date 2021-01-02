@@ -12,4 +12,5 @@ import java.util.Optional;
 
 public interface NotificationRepository extends JpaRepository<Notification, Long> {
     Page<Notification> findAllByUserId(Long id, Pageable paging);
+    List<Notification> findAllByUserId(Long userId);
 }

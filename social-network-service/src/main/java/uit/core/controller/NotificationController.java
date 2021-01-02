@@ -8,6 +8,8 @@ import uit.core.entity.Notification;
 import uit.core.entity.event.UserAction;
 import uit.core.service.NotificationService;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/notification")
 public class NotificationController {
@@ -21,9 +23,15 @@ public class NotificationController {
     }
 
     @PreAuthorize("#oauth2.hasScope('ui')")
-    @PostMapping("/read/{id}")
-    public Notification markAsReaded(@PathVariable long id) throws Exception {
-        return notificationService.markAsReaded(id);
+    @PostMapping("/markAsRead/all")
+    public List<Notification> markAsReadForAllNotiOfUser() throws Exception {
+        return notificationService.markAsReadForAllNotiOfUser();
+    }
+
+    @PreAuthorize("#oauth2.hasScope('ui')")
+    @PostMapping("/markAsRead/{id}")
+    public Notification markAsRead(@PathVariable long id) throws Exception {
+        return notificationService.markAsRead(id);
     }
 
     @PreAuthorize("#oauth2.hasScope('ui')")

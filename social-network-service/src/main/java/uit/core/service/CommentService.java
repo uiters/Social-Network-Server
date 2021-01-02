@@ -137,6 +137,7 @@ public class CommentService {
         notification.setURL("/post/" + postId);
         notification.setCreatedAt(Timestamp.valueOf(LocalDateTime.now()));
         notification.setType(LIKE);
+        notification.setSecondUserId(commentItem.getUserId());
 
         User author = getUserByPostId(postId);
 
