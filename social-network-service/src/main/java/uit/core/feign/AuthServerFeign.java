@@ -20,4 +20,7 @@ public interface AuthServerFeign {
 
     @PostMapping("/user/disable/{userId}")
     User enableUser(@PathVariable long userId);
+
+    @PostMapping("/user/admin/create")
+    User createAdmin(@RequestBody User user);
 }

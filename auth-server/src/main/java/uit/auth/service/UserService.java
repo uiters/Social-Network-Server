@@ -12,8 +12,10 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
+import uit.auth.entity.Role;
 import uit.auth.entity.User;
 import uit.auth.feign.MediaServiceFeign;
+import uit.auth.repository.RoleRepository;
 import uit.auth.repository.UserRepository;
 import uit.auth.repository.specification.SearchCriteria;
 import uit.auth.repository.specification.SearchOperation;
@@ -32,6 +34,9 @@ public class UserService implements UserDetailsService {
 
     @Autowired
     private MediaServiceFeign mediaServiceFeign;
+
+    @Autowired
+    private RoleRepository roleRepository;
 
     public List<User> getAll(String id, String username, String email) {
         UserSpecification userSpecification = new UserSpecification();
@@ -149,5 +154,13 @@ public class UserService implements UserDetailsService {
         User user = userOptional.get();
         user.setStatus(1);
         return userRepository.save(user);
+    }
+
+    public User createAdmin(User user) throws Exception {
+        Role role = roleRepository.findByName("ADMIN").get();
+        Set<Role> roles = new HashSet();
+        roles.add(role);
+        user.setRoles(roles);
+        return this.create(user);
     }
 }

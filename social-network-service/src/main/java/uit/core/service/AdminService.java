@@ -64,17 +64,17 @@ public class AdminService {
 
         reportResponse.setItems(reportPage.getContent());
 
-        if (page < reportPage.getTotalPages()-1) {
+        if (page < reportPage.getTotalPages() - 1) {
             reportResponse.setHasNext(true);
         } else {
             reportResponse.setHasNext(false);
         }
-        String nextLink = "/admin/reports?&page=".concat(String.valueOf(page+1));
+        String nextLink = "/admin/reports?&page=".concat(String.valueOf(page + 1));
         reportResponse.setNextLink(nextLink);
         return reportResponse;
     }
 
-    public List<Level> getLevels()  {
+    public List<Level> getLevels() {
         return levelRepository.findAll();
     }
 
@@ -130,7 +130,7 @@ public class AdminService {
 
 
     //ACTION
-    public List<ActionResponse> getActions()  {
+    public List<ActionResponse> getActions() {
         List<Action> actions = actionRepository.findAll();
 
         List<ActionResponse> responses = new ArrayList<>();
@@ -204,4 +204,9 @@ public class AdminService {
         newReport.setStatus(report.getStatus());
         return reportRepository.save(newReport);
     }
+
+    public User createAdmin(User user) {
+        return authServerFeign.createAdmin(user);
+    }
 }
+

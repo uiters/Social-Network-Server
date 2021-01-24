@@ -38,6 +38,11 @@ public class UserController {
         return userService.create(user);
     }
 
+    @PostMapping("/admin/create")
+    public User createAdmin(@RequestBody User user) throws Exception {
+        return userService.createAdmin(user);
+    }
+
     @PutMapping("/{id}")
     public User update(@PathVariable Long id,
                        @RequestParam(defaultValue = "", required = false) String username,

@@ -139,6 +139,14 @@ public class AdminController {
         return adminService.getUserLevels();
     }
 
+    @PostMapping("/create")
+    private User createAdmin(@RequestBody User user) throws Exception {
+        if (!isAdmin()) {
+            throw new Exception("Only Admin can perform this action");
+        }
+        return adminService.createAdmin(user);
+    }
+
     private boolean isAdmin() {
         User user = authServerFeign.getByUserName(SocialUtil.getCurrentUserEmail());
         Set<Role> roles = user.getRoles();
