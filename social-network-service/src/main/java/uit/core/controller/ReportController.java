@@ -25,7 +25,17 @@ public class ReportController {
         return reportService.createReporType(reportType);
     }
 
-    @GetMapping("/types")
+    @PutMapping("/type/{id}")
+    private ReportType updateTypeReport(@PathVariable Long id, @RequestBody ReportType reportType) throws Exception {
+        return reportService.updateReporType(reportType, id);
+    }
+
+    @DeleteMapping("/type/{id}")
+    private String deleteTypeReport(@PathVariable Long id) throws Exception {
+        return reportService.deleteReportType(id);
+    }
+
+    @GetMapping("/type")
     private List<ReportType> getReportTypes() {
         return reportService.getReportTypes();
     }

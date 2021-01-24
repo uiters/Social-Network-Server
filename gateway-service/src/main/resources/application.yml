@@ -23,17 +23,17 @@ hystrix:
             timeoutInMilliseconds: 5000
 
 ribbon:
-  ConnectTimeout: 5000
-  ReadTimeout: 5000
+  ConnectTimeout: 8000
+  ReadTimeout: 8000
 
 zuul:
   ribbon:
-    ConnectTimeout: 5000
-    ReadTimeout: 5000
+    ConnectTimeout: 8000
+    ReadTimeout: 8000
   sensitiveHeaders: Cookie,Set-Cookie
   host:
-    connect-timeout-milllis: 5000
-    socket-timeout-milllis: 5000
+    connect-timeout-milllis: 8000
+    socket-timeout-milllis: 8000
   ignoredServices: '*'
   routes:
     social-network-service:

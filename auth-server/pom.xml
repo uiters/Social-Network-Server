@@ -79,7 +79,8 @@
 			<artifactId>feign-form</artifactId>
 			<version>3.6.0</version>
 		</dependency>
-	</dependencies>
+
+    </dependencies>
 
 	<dependencyManagement>
 		<dependencies>

@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.*;
 import uit.core.dto.response.ActionResponse;
 import uit.core.dto.response.ReportResponse;
 import uit.core.dto.response.UserLevelResponse;
+import uit.core.entity.Report;
 import uit.core.entity.Role;
 import uit.core.entity.User;
 import uit.core.entity.event.Action;
@@ -42,7 +43,7 @@ public class AdminController {
         return adminService.enableUser(userId);
     }
 
-    @GetMapping("/reports")
+    @GetMapping("/report")
     private ReportResponse getReports(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "5") int limit) throws Exception {
         if (!isAdmin()) {
             throw new Exception("Only Admin can perform this action");
@@ -50,10 +51,27 @@ public class AdminController {
         return adminService.getReports(page, limit);
     }
 
+    @PutMapping("/report/{id}")
+    private Report updateReport(@PathVariable Long id, @RequestBody Report report) throws Exception {
+        if (!isAdmin()) {
+            throw new Exception("Only Admin can perform this action");
+        }
+        return adminService.updateReport(id, report);
+    }
+
+    @DeleteMapping("/report/{id}")
+    private String deleteReport(@PathVariable Long id) throws Exception {
+        if (!isAdmin()) {
+            throw new Exception("Only Admin can perform this action");
+        }
+        return adminService.deleteReport(id);
+    }
+
+
 
     //API for LEVEL
 
-    @GetMapping("/levels")
+    @GetMapping("/level")
     private List<Level> getLevels() throws Exception {
         if (!isAdmin()) {
             throw new Exception("Only Admin can perform this action");
@@ -87,7 +105,7 @@ public class AdminController {
 
     //API for ACTION
 
-    @GetMapping("/actions")
+    @GetMapping("/action")
     private List<ActionResponse> getActions() throws Exception {
         if (!isAdmin()) {
             throw new Exception("Only Admin can perform this action");

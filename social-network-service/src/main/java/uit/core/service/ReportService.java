@@ -9,6 +9,7 @@ import uit.core.repository.ReportRepository;
 import uit.core.repository.ReportTypeRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ReportService {
@@ -28,5 +29,20 @@ public class ReportService {
 
     public List<ReportType> getReportTypes() {
         return reportTypeRepository.findAll();
+    }
+
+    public ReportType updateReporType(ReportType reportType, Long id) throws Exception {
+        Optional<ReportType> reportTypeDb = reportTypeRepository.findById(id);
+        if (reportTypeDb.isEmpty()) {
+            throw new Exception("Report Type ID not found");
+        }
+        ReportType newReportType = reportTypeDb.get();
+        newReportType.setName(reportType.getName());
+        return reportTypeRepository.save(newReportType);
+    }
+
+    public String deleteReportType(Long id) {
+        reportTypeRepository.deleteById(id);
+        return "Delete report type successfully !";
     }
 }

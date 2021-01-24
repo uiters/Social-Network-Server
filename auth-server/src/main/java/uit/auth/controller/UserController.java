@@ -17,8 +17,10 @@ public class UserController {
     private UserService userService;
 
     @GetMapping
-    public List<User> getAll() {
-        return userService.getAll();
+    public List<User> getAll(@RequestParam(defaultValue = "", required = false) String id,
+                             @RequestParam(defaultValue = "", required = false) String username,
+                             @RequestParam(defaultValue = "", required = false) String email) {
+        return userService.getAll(id, username, email);
     }
 
     @GetMapping("/{id}")

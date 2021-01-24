@@ -24,6 +24,16 @@ public class Report {
     @UpdateTimestamp
     private Timestamp updatedAt;
 
+    private long status = 0;
+
+    public long getStatus() {
+        return status;
+    }
+
+    public void setStatus(long status) {
+        this.status = status;
+    }
+
     public ReportType getReportType() {
         return reportType;
     }

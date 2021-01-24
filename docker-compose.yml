@@ -69,6 +69,16 @@ services:
       - auth-server
       - social-network-service
 
+  angular-webapp:
+    image: 20041998/angular-webapp
+    container_name: angular-webapp
+    restart: on-failure
+    ports:
+    - 80:80
+    links:
+      - gateway-service
+
+
 
 
 

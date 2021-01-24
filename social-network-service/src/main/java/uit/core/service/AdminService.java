@@ -189,4 +189,19 @@ public class AdminService {
     }
 
 
+    public String deleteReport(Long id) {
+        reportRepository.deleteById(id);
+        return "Delete report successfully !";
+    }
+
+    public Report updateReport(Long id, Report report) throws Exception {
+        Optional<Report> reportDb = reportRepository.findById(id);
+        if (reportDb.isEmpty()) {
+            throw new Exception("report ID not found");
+        }
+
+        Report newReport = reportDb.get();
+        newReport.setStatus(report.getStatus());
+        return reportRepository.save(newReport);
+    }
 }

@@ -1,6 +1,10 @@
 package uit.auth.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -11,6 +15,9 @@ import org.springframework.web.multipart.MultipartFile;
 import uit.auth.entity.User;
 import uit.auth.feign.MediaServiceFeign;
 import uit.auth.repository.UserRepository;
+import uit.auth.repository.specification.SearchCriteria;
+import uit.auth.repository.specification.SearchOperation;
+import uit.auth.repository.specification.UserSpecification;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -26,8 +33,20 @@ public class UserService implements UserDetailsService {
     @Autowired
     private MediaServiceFeign mediaServiceFeign;
 
-    public List<User> getAll() {
-        return userRepository.findAll();
+    public List<User> getAll(String id, String username, String email) {
+        UserSpecification userSpecification = new UserSpecification();
+        if (!StringUtils.isEmpty(id)) {
+            userSpecification.add(new SearchCriteria("id", id, SearchOperation.LIKE));
+        }
+        if (!StringUtils.isEmpty(username)) {
+            userSpecification.add(new SearchCriteria("username", username, SearchOperation.LIKE));
+        }
+        if (!StringUtils.isEmpty(email)) {
+            userSpecification.add(new SearchCriteria("email", email, SearchOperation.LIKE));
+        }
+
+        List<User> response = userRepository.findAll(userSpecification);
+        return response;
     }
 
     public User getById(Long id) {

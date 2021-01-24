@@ -58,4 +58,15 @@ logging:
   web:
     socket: trace
 
+feign:
+  client:
+    config:
+      default:
+        connectTimeout: 8000
+        readTimeout: 8000
+
+#ribbon:
+#  eureka:
+#    enabled: true
+
 
