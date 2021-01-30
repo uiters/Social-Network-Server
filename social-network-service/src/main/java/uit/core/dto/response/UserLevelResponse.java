@@ -1,67 +1,33 @@
 package uit.core.dto.response;
 
+import java.util.List;
+
 public class UserLevelResponse {
-    private long userId;
-    private String displayName;
-    private long postId;
-    private String postTitle;
-    private long point;
-    private long levelId;
-    private String levelName;
+    private Boolean hasNext;
+    private String nextLink;
+    private List<UserLevelItem> items;
 
-    public long getUserId() {
-        return userId;
+    public Boolean getHasNext() {
+        return hasNext;
     }
 
-    public void setUserId(long userId) {
-        this.userId = userId;
+    public void setHasNext(Boolean hasNext) {
+        this.hasNext = hasNext;
     }
 
-    public String getDisplayName() {
-        return displayName;
+    public String getNextLink() {
+        return nextLink;
     }
 
-    public void setDisplayName(String displayName) {
-        this.displayName = displayName;
+    public void setNextLink(String nextLink) {
+        this.nextLink = nextLink;
     }
 
-    public long getPostId() {
-        return postId;
+    public List<UserLevelItem> getItems() {
+        return items;
     }
 
-    public void setPostId(long postId) {
-        this.postId = postId;
-    }
-
-    public String getPostTitle() {
-        return postTitle;
-    }
-
-    public void setPostTitle(String postTitle) {
-        this.postTitle = postTitle;
-    }
-
-    public long getPoint() {
-        return point;
-    }
-
-    public void setPoint(long point) {
-        this.point = point;
-    }
-
-    public long getLevelId() {
-        return levelId;
-    }
-
-    public void setLevelId(long levelId) {
-        this.levelId = levelId;
-    }
-
-    public String getLevelName() {
-        return levelName;
-    }
-
-    public void setLevelName(String levelName) {
-        this.levelName = levelName;
+    public void setItems(List<UserLevelItem> items) {
+        this.items = items;
     }
 }

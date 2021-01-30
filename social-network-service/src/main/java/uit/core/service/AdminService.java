@@ -7,9 +7,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-import uit.core.dto.response.ActionResponse;
-import uit.core.dto.response.ReportResponse;
-import uit.core.dto.response.UserLevelResponse;
+import uit.core.dto.response.*;
+import uit.core.entity.Post;
 import uit.core.entity.Report;
 import uit.core.entity.User;
 import uit.core.entity.event.Action;
@@ -166,26 +165,37 @@ public class AdminService {
         return actionRepository.save(action);
     }
 
-    public List<UserLevelResponse> getUserLevels() {
-        List<UserLevel> userLevels = userLevelRepository.findAll();
+    public UserLevelResponse getUserLevelsOfThePost(int page, int limit, long postId) {
+        UserLevelResponse userLevelResponse = new UserLevelResponse();
+        Pageable paging = PageRequest.of(page, limit, Sort.by(Sort.Direction.DESC, "postId"));
+        Page<UserLevel> response = userLevelRepository.findAll(paging);
 
-        List<UserLevelResponse> userLevelResponses = new ArrayList<>();
-        for (UserLevel userLevel : userLevels) {
-            UserLevelResponse userLevelResponse = modelMapper.map(userLevel, UserLevelResponse.class);
+        List<UserLevelItem> userLevelItems = new ArrayList<>();
+        for (UserLevel userLevel : response.getContent()) {
+            UserLevelItem userLevelItem = modelMapper.map(userLevel, UserLevelItem.class);
 
-            String username = authServerFeign.getById(userLevelResponse.getUserId()).getUsername();
-            userLevelResponse.setDisplayName(username);
+            String username = authServerFeign.getById(userLevelItem.getUserId()).getUsername();
+            userLevelItem.setDisplayName(username);
 
             //TODO refactor LEVEL NUMBER
-            String levelName = levelRepository.findById(userLevelResponse.getLevelId()).get().getName();
-            userLevelResponse.setLevelName(levelName);
+            String levelName = levelRepository.findById(userLevelItem.getLevelId()).get().getName();
+            userLevelItem.setLevelName(levelName);
 
             String postTitle = postRepository.findById(userLevel.getPostId()).get().getTitle();
-            userLevelResponse.setPostTitle(postTitle);
+            userLevelItem.setPostTitle(postTitle);
 
-            userLevelResponses.add(userLevelResponse);
+            userLevelItems.add(userLevelItem);
         }
-        return userLevelResponses;
+
+        userLevelResponse.setItems(userLevelItems);
+        if (page < response.getTotalPages()-1) {
+            userLevelResponse.setHasNext(true);
+        } else {
+            userLevelResponse.setHasNext(false);
+        }
+        String nextLink = "/admin/userLevel?&page=".concat(String.valueOf(page+1));
+        userLevelResponse.setNextLink(nextLink);
+        return userLevelResponse;
     }
 
 

@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import uit.core.dto.response.ActionResponse;
 import uit.core.dto.response.ReportResponse;
+import uit.core.dto.response.UserLevelItem;
 import uit.core.dto.response.UserLevelResponse;
 import uit.core.entity.Report;
 import uit.core.entity.Role;
@@ -131,12 +132,12 @@ public class AdminController {
 
 
     //USER LEVEL
-    @GetMapping("/userLevel")
-    private List<UserLevelResponse> getUserLevels() throws Exception {
+    @GetMapping("/userLevel/{postId}")
+    private UserLevelResponse getUserLevelsOfThePost(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "5") int limit, @PathVariable long postId) throws Exception {
         if (!isAdmin()) {
             throw new Exception("Only Admin can perform this action");
         }
-        return adminService.getUserLevels();
+        return adminService.getUserLevelsOfThePost(page, limit, postId);
     }
 
     @PostMapping("/create")
